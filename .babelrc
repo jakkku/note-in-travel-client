@@ -1,0 +1,6 @@
+{
+  "plugins": [
+    ["module:react-native-dotenv"],
+    ["babel-plugin-styled-components"]
+  ]
+}

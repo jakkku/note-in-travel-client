@@ -1,5 +1,6 @@
 module.exports = {
   env: {
+    browser: true,
     jest: true,
     es2021: true,
   },
@@ -8,6 +9,7 @@ module.exports = {
     "airbnb",
     "airbnb/hooks",
     "eslint:recommended",
+    "@react-native-community",
   ],
   parserOptions: {
     ecmaVersion: 12,
@@ -44,6 +46,7 @@ module.exports = {
     "jsx-a11y/label-has-for": "off",
 
     // expo
+    "import/no-unresolved": [2, { ignore: ["@env"] }],
     "no-use-before-define": "off",
     "react/prop-types": "off",
   },
