@@ -1,5 +1,12 @@
 import { API_SERVER_URL } from "@env";
 
+/**
+ * fetch data to server and verify response
+ * @param {string} method - POST, PUT, PATCH, GET, DELETE
+ * @param {string} url - path after api server url
+ * @param {any} data - pass to body
+ * @returns response from api server
+ */
 async function fetchData(method, url, data) {
   try {
     let response = await fetch(`${API_SERVER_URL}${url}`, {

@@ -9,7 +9,7 @@ module.exports = {
     "airbnb",
     "airbnb/hooks",
     "eslint:recommended",
-    "@react-native-community",
+    // "@react-native-community",
   ],
   parserOptions: {
     ecmaVersion: 12,

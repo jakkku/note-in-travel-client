@@ -1,16 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+import fetchData from "../utils/fetchData";
+
+export const loginUser = createAsyncThunk(
+  "user/loginUserStatus",
+  async (user) => {
+    const response = await fetchData("POST", "/auth/login", user);
+
+    return response;
+  },
+);
 
 const initialState = {
   value: null,
   error: null,
-  status: "pending",
+  status: "idle",
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers: {
+    [loginUser.pending]: (state) => {
+      if (state.status === "idle") {
+        state.status = "pending";
+      }
+    },
+    [loginUser.fulfilled]: (state, action) => {
+      if (state.status === "pending") {
+        state.value = action.payload;
+        state.status = "idle";
+      }
+    },
+    [loginUser.rejected]: (state, action) => {
+      if (state.status === "pending") {
+        state.error = action.payload?.message;
+        state.status = "idle";
+      }
+    },
+  },
 });
 
 export default userSlice.reducer;
