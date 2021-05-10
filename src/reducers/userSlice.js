@@ -11,6 +11,16 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+const mock = {
+  _id: "60979c06cc5d7c4100b81ba4",
+  email: "a01081440011@gmail.com",
+  favoriteCourses: [],
+  favoriteSites: [],
+  myCourses: [],
+  name: "sungjin kim",
+  photoUrl: "https://lh3.googleusercontent.com/a/AATXAJzVxQACbbwpFSpdxU9IjpggSZFH483ZcYGk2PaO=s96-c",
+};
+
 const initialState = {
   value: null,
   error: null,
@@ -43,3 +53,6 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
+
+export const selectUserName = (state) => state.user.value.name;
+export const selectPhotoUrl = (state) => state.user.value.photoUrl;

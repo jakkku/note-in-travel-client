@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
@@ -8,10 +8,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import { loginUser } from "../../reducers/userSlice";
-import loginWithGoogleAsync from "../../utils/loginWithGoogleAsync";
+import { loginUser } from "../reducers/userSlice";
+import loginWithGoogleAsync from "../utils/loginWithGoogleAsync";
 
-function WelcomeScreen({ navigation }) {
+function WelcomeScreen() {
   const loginStatus = useSelector((state) => state.user.status);
   const dispath = useDispatch();
 
@@ -24,14 +24,7 @@ function WelcomeScreen({ navigation }) {
       return;
     }
 
-    try {
-      const actionResult = await dispath(loginUser(result.user));
-
-      unwrapResult(actionResult);
-      navigation.navigate("main");
-    } catch (err) {
-      console.log(err.message);
-    }
+    dispath(loginUser(result.user));
   }
 
   return (

@@ -1,6 +1,13 @@
 import * as Google from "expo-google-app-auth";
 import { IOS_CLIENT_ID } from "@env";
 
+/**
+ * login user with google auth
+ * @returns 3 cases
+ *   success: { user },
+ *   cancel: { cancel: true },
+ *   error: { error: error message }
+ */
 export default async function loginWithGoogleAsync() {
   try {
     const result = await Google.logInAsync({
@@ -16,6 +23,6 @@ export default async function loginWithGoogleAsync() {
 
     return { cancelled: true };
   } catch (err) {
-    return { error: true };
+    return { error: err.message };
   }
 }

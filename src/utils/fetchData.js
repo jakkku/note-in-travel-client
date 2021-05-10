@@ -8,6 +8,7 @@ import { API_SERVER_URL } from "@env";
  * @returns response from api server
  */
 async function fetchData(method, url, data) {
+  console.log(API_SERVER_URL);
   try {
     let response = await fetch(`${API_SERVER_URL}${url}`, {
       method,
