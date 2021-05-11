@@ -5,4 +5,10 @@ export default {
     latitudeDelta: 5.500,
     longitudeDelta: 5.200,
   },
+  gangneung: {
+    latitude: 37.766590864869166,
+    longitude: 128.89343670621722,
+    latitudeDelta: 0.200,
+    longitudeDelta: 0.200,
+  },
 };
