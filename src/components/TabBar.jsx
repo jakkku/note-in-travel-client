@@ -1,18 +1,18 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-import IconButton from "./IconButton";
+import TabButton from "./TabButton";
 
 function TabBar({ navigation }) {
   const nav = navigation.navigation;
 
   return (
     <View style={styles.container}>
-      <IconButton
+      <TabButton
         name="home"
         onPress={() => nav.navigate("home")}
       />
-      <IconButton
+      <TabButton
         name="user-alt"
         onPress={() => nav.navigate("user")}
       />

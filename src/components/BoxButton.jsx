@@ -1,27 +1,36 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 
-function BoxButton({ onPress, text }) {
+function BoxButton({
+  text,
+  onPress,
+  children,
+  style,
+}) {
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={{ ...styles.container, ...style }}
       onPress={onPress}
     >
-      <Text>{text}</Text>
+      <Text style={styles.text}>{text}</Text>
+      {children}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: "80%",
-    height: "10%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: "5%",
+    padding: "8%",
     borderRadius: 20,
     backgroundColor: "#DEDFE3",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
 
