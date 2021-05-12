@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import * as SecureStore from "expo-secure-store";
 
 import fetchData from "../utils/fetchData";
 
@@ -7,7 +8,9 @@ export const loginUser = createAsyncThunk(
   async (user) => {
     const response = await fetchData("POST", "/auth/login", user);
 
-    return response;
+    await SecureStore.setItemAsync("token", response.token);
+
+    return response.user;
   },
 );
 

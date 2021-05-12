@@ -1,5 +1,7 @@
 import { API_SERVER_URL } from "@env";
 
+import generateHeader from "./generateHeader";
+
 /**
  * fetch data to server and verify response
  * @param {string} method - POST, PUT, PATCH, GET, DELETE
@@ -8,13 +10,11 @@ import { API_SERVER_URL } from "@env";
  * @returns response from api server
  */
 async function fetchData(method, url, data) {
-  console.log(API_SERVER_URL);
   try {
+    const headers = await generateHeader();
     let response = await fetch(`${API_SERVER_URL}${url}`, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       credentials: "include",
       body: JSON.stringify(data),
     });
