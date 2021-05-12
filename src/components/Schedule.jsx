@@ -9,8 +9,8 @@ import {
 
 import VectorIcon from "./shared/VectorIcon";
 
-function Schedule({ index, site }) {
-  const favoriteSites = useSelector((state) => state.user.value.favoriteSites);
+function Schedule({ site }) {
+  const favoriteSites = useSelector((state) => state.favoriteSites.items);
   const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === site.fullName);
 
   function handleFavoritePress() {}
@@ -19,7 +19,7 @@ function Schedule({ index, site }) {
     <View style={styles.container}>
       <View>
         <View style={styles.indexContainer}>
-          <Text style={styles.index}>{index}</Text>
+          <Text style={styles.index}>{site.index}</Text>
         </View>
         <View style={styles.dash} />
       </View>

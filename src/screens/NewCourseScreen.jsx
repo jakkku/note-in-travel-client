@@ -16,7 +16,7 @@ import SafeAreaBottom from "../components/shared/SafeAreaBottom";
 
 import REGION from "../constants/region";
 import calculateRegion from "../utils/calcutateRegion";
-import { saveMyCourse } from "../reducers/userSlice";
+import { saveMyCourse } from "../reducers/myCoursesSlice";
 
 const { height: screenHeight } = Dimensions.get("screen");
 
@@ -33,7 +33,12 @@ function NewCourseScreen() {
       structured_formatting: { main_text: shortName },
     } = data;
 
-    setSites((prev) => prev.concat({ shortName, fullName, region: nextRegion }));
+    setSites((prev) => prev.concat({
+      index: prev.length + 1,
+      shortName,
+      fullName,
+      region: nextRegion,
+    }));
     setRegion(nextRegion);
   }
 

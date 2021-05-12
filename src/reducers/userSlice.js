@@ -11,21 +11,10 @@ export const loginUser = createAsyncThunk(
   },
 );
 
-export const saveMyCourse = createAsyncThunk(
-  "usesr/saveMyCourseStatus",
-  async (course) => {
-    const response = await fetchData("POST", "/course", course);
-
-    return response;
-  },
-);
-
+// TODO: delete thiss
 const mock = {
   _id: "60979c06cc5d7c4100b81ba4",
   email: "a01081440011@gmail.com",
-  favoriteCourses: [],
-  favoriteSites: [],
-  myCourses: [],
   name: "sungjin kim",
   photoUrl: "https://lh3.googleusercontent.com/a/AATXAJzVxQACbbwpFSpdxU9IjpggSZFH483ZcYGk2PaO=s96-c",
 };
@@ -48,28 +37,23 @@ const userSlice = createSlice({
     },
     [loginUser.fulfilled]: (state, action) => {
       if (state.status === "pending") {
-        state.value = action.payload;
+        const {
+          _id,
+          email,
+          name,
+          photoUrl,
+        } = action.payload;
+
+        state.value = {
+          _id,
+          email,
+          name,
+          photoUrl,
+        };
         state.status = "idle";
       }
     },
     [loginUser.rejected]: (state, action) => {
-      if (state.status === "pending") {
-        state.error = action.payload.message;
-        state.status = "idle";
-      }
-    },
-    [saveMyCourse.pending]: (state) => {
-      if (state.status === "idle") {
-        state.status = "pending";
-      }
-    },
-    [saveMyCourse.fulfilled]: (state, action) => {
-      if (state.status === "pending") {
-        state.value = action.payload;
-        state.status = "idle";
-      }
-    },
-    [saveMyCourse.rejected]: (state, action) => {
       if (state.status === "pending") {
         state.error = action.payload.message;
         state.status = "idle";
