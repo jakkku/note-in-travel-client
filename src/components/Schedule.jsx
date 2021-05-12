@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Text,
   View,
@@ -8,31 +8,37 @@ import {
 } from "react-native";
 
 import VectorIcon from "./shared/VectorIcon";
+import { toggleSite } from "../reducers/favoriteSitesSlice";
 
-function Schedule({ site }) {
+function Schedule({ site, onIndexPress, isSelected }) {
   const favoriteSites = useSelector((state) => state.favoriteSites.items);
-  const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === site.fullName);
+  const isFavorite = favoriteSites?.find((favoriteSite) => favoriteSite.fullName === site.fullName);
+  const dispatch = useDispatch();
 
-  function handleFavoritePress() {}
+  function handleLikePress() {
+    dispatch(toggleSite(site));
+  }
 
   return (
     <View style={styles.container}>
       <View>
-        <View style={styles.indexContainer}>
+        <TouchableOpacity
+          style={[styles.indexContainer, isSelected && styles.selectedIndexContainer]}
+          onPress={() => onIndexPress(site)}
+        >
           <Text style={styles.index}>{site.index}</Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.dash} />
       </View>
       <View style={styles.namesContainer}>
         <Text style={styles.shortName}>{site.shortName}</Text>
         <Text>{site.fullName}</Text>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleLikePress}>
         <VectorIcon
           type="FontAwesome"
           name={isFavorite ? "heart" : "heart-o"}
           color="#FE7762"
-          onPress={handleFavoritePress}
         />
       </TouchableOpacity>
     </View>
@@ -52,6 +58,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: "#4FD4C2",
+  },
+  selectedIndexContainer: {
+    backgroundColor: "#FE7762",
   },
   index: {
     color: "#FFFFFF",

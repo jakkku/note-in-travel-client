@@ -73,7 +73,10 @@ function NewCourseScreen() {
         }}
         debounce={1000}
       />
-      <ScheduleContainer sites={sites} />
+      <ScheduleContainer
+        sites={sites}
+        onChange={setSites}
+      />
       <BoxButton
         text="SAVE"
         onPress={handleSavePress}

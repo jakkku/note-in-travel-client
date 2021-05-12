@@ -14,7 +14,21 @@ const initialState = {
 const favoriteSitesSlice = createSlice({
   name: "favoriteSites",
   initialState,
-  reducers: {},
+  reducers: {
+    toggleSite: (state, action) => {
+      const favoriteSites = state.items;
+      const { fullName, shortName, region } = action.payload;
+      const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === fullName);
+
+      state.items = isFavorite
+        ? favoriteSites.filter((favoriteSite) => favoriteSite.fullName !== fullName)
+        : favoriteSites.concat({
+          fullName,
+          shortName,
+          region,
+        });
+    },
+  },
   extraReducers: {
     [loginUser.pending]: (state) => {
       if (state.status === "idle") {
@@ -37,5 +51,7 @@ const favoriteSitesSlice = createSlice({
     },
   },
 });
+
+export const { toggleSite } = favoriteSitesSlice.actions;
 
 export default favoriteSitesSlice.reducer;

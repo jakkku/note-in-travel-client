@@ -1,16 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 
 import Schedule from "./Schedule";
 
-function ScheduleContainer({ sites, style }) {
+function ScheduleContainer({ sites, onChange, style }) {
+  const [selected, setSelected] = useState(null);
+
+  function handleIndexPress(site) {
+    if (!selected) {
+      setSelected(site);
+      return;
+    }
+
+    if (selected.fullName !== site.fullName) {
+      swapIndex(selected, site);
+    }
+
+    setSelected(null);
+  }
+
+  function swapIndex(site1, site2) {
+    [site1.index, site2.index] = [site2.index, site1.index];
+    onChange(sites.slice().sort((a, b) => a.index - b.index));
+  }
+
   return (
     <ScrollView style={{ ...styles.container, ...style }}>
-      {sites.map((site, index) => (
+      {sites.map((site) => (
         <Schedule
           key={site.fullName}
-          index={index + 1}
           site={site}
+          onIndexPress={handleIndexPress}
+          isSelected={selected && selected.fullName === site.fullName}
         />
       ))}
     </ScrollView>
