@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 
-import VectorIcon from "./shared/VectorIcon";
+import VectorIcon from "./VectorIcon";
 
 function TabButton({
   name,

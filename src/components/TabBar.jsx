@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-import TabButton from "./TabButton";
+import TabButton from "./shared/TabButton";
 
 function TabBar({ navigation }) {
   const nav = navigation.navigation;

@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   View,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_API_KEY } from "@env";
 
 import ScheduleContainer from "../components/ScheduleContainer";
-import BoxButton from "../components/BoxButton";
+import BoxButton from "../components/shared/BoxButton";
 import VectorIcon from "../components/shared/VectorIcon";
 import SafeAreaBottom from "../components/shared/SafeAreaBottom";
 
@@ -20,10 +22,11 @@ import { saveMyCourse } from "../reducers/myCoursesSlice";
 
 const { height: screenHeight } = Dimensions.get("screen");
 
-function NewCourseScreen() {
+function NewCourseScreen({ navigation }) {
+  const isLoading = useSelector((state) => state.myCourses.status);
+  const dispatch = useDispatch();
   const [region, setRegion] = useState(REGION.korea);
   const [sites, setSites] = useState([]);
-  const dispatch = useDispatch();
 
   function handleSearchPress(data, details = null) {
     const { location, viewport } = details.geometry;
@@ -42,8 +45,23 @@ function NewCourseScreen() {
     setRegion(nextRegion);
   }
 
-  function handleSavePress() {
-    dispatch(saveMyCourse(sites));
+  async function handleSavePress() {
+    if (isLoading === "pending" || sites.length === 0) return;
+
+    const actionResult = await dispatch(saveMyCourse(sites));
+
+    try {
+      const myCourse = unwrapResult(actionResult);
+
+      navigation.navigate("CourseDetail", { id: myCourse._id });
+    } catch (err) {
+      // TODO: add error handling
+      console.log(err);
+    }
+  }
+
+  if (isLoading === "pending") {
+    return <ActivityIndicator size="large" />;
   }
 
   return (

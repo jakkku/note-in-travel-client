@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
+import { useDispatch } from "react-redux";
 
-import Schedule from "./Schedule";
+import Schedule from "./shared/Schedule";
+import { toggleSite } from "../reducers/favoriteSitesSlice";
 
 function ScheduleContainer({ sites, onChange, style }) {
   const [selected, setSelected] = useState(null);
+  const dispatch = useDispatch();
 
   function handleIndexPress(site) {
     if (!selected) {
@@ -19,6 +22,10 @@ function ScheduleContainer({ sites, onChange, style }) {
     setSelected(null);
   }
 
+  function handleLikePress(site) {
+    dispatch(toggleSite(site));
+  }
+
   function swapIndex(site1, site2) {
     [site1.index, site2.index] = [site2.index, site1.index];
     onChange(sites.slice().sort((a, b) => a.index - b.index));
@@ -31,6 +38,7 @@ function ScheduleContainer({ sites, onChange, style }) {
           key={site.fullName}
           site={site}
           onIndexPress={handleIndexPress}
+          onLikePress={handleLikePress}
           isSelected={selected && selected.fullName === site.fullName}
         />
       ))}

@@ -2,17 +2,16 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { View, StyleSheet } from "react-native";
 
-import Profile from "../components/Profile";
-import { selectPhotoUrl, selectUserName } from "../reducers/userSlice";
+import Profile from "../components/shared/Profile";
 
 function UserScreen() {
-  const userName = useSelector(selectUserName);
-  const photoUrl = useSelector(selectPhotoUrl);
+  const { name, photoUrl } = useSelector((state) => state.user.value);
+  const myCourses = useSelector((state) => state.myCourses.items);
 
   return (
     <View style={styles.container}>
       <Profile
-        name={userName}
+        name={name}
         photoUrl={photoUrl}
       />
     </View>

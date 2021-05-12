@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Text,
   View,
@@ -7,17 +7,16 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import VectorIcon from "./shared/VectorIcon";
-import { toggleSite } from "../reducers/favoriteSitesSlice";
+import VectorIcon from "./VectorIcon";
 
-function Schedule({ site, onIndexPress, isSelected }) {
+function Schedule({
+  site,
+  onIndexPress,
+  onLikePress,
+  isSelected,
+}) {
   const favoriteSites = useSelector((state) => state.favoriteSites.items);
   const isFavorite = favoriteSites?.find((favoriteSite) => favoriteSite.fullName === site.fullName);
-  const dispatch = useDispatch();
-
-  function handleLikePress() {
-    dispatch(toggleSite(site));
-  }
 
   return (
     <View style={styles.container}>
@@ -34,7 +33,7 @@ function Schedule({ site, onIndexPress, isSelected }) {
         <Text style={styles.shortName}>{site.shortName}</Text>
         <Text>{site.fullName}</Text>
       </View>
-      <TouchableOpacity onPress={handleLikePress}>
+      <TouchableOpacity onPress={() => onLikePress(site)}>
         <VectorIcon
           type="FontAwesome"
           name={isFavorite ? "heart" : "heart-o"}
