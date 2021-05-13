@@ -50,7 +50,7 @@ function ScheduleContainer({ schedules, onChange, style }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: "20%",
+    marginTop: "5%",
     paddingHorizontal: "5%",
     width: "100%",
   },

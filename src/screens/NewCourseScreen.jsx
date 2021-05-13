@@ -4,33 +4,40 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import {
   View,
   StyleSheet,
-  Dimensions,
   ActivityIndicator,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { GOOGLE_API_KEY } from "@env";
 
-import ScheduleContainer from "../components/ScheduleContainer";
 import BoxButton from "../components/shared/BoxButton";
 import VectorIcon from "../components/shared/VectorIcon";
-import SafeAreaBottom from "../components/shared/SafeAreaBottom";
+import SafeArea from "../components/shared/SafeArea";
+import GoogleSearchBar from "../components/shared/GoogleSearchBar";
+import ScheduleContainer from "../components/ScheduleContainer";
 
 import REGION from "../constants/region";
-import calculateRegion from "../utils/calcutateRegion";
+import calcutateViewport from "../utils/calcutateViewport";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
 
-const { height: screenHeight } = Dimensions.get("screen");
-
 function NewCourseScreen({ navigation }) {
-  const isLoading = useSelector((state) => state.myCourses.status);
-  const dispatch = useDispatch();
   const [region, setRegion] = useState(REGION.korea);
   const [schedules, setSchedules] = useState([]);
 
-  function handleSearchPress(data, details = null) {
-    const { location, viewport } = details.geometry;
-    const nextRegion = calculateRegion(location, viewport);
+  const isLoading = useSelector((state) => state.myCourses.status);
+  const dispatch = useDispatch();
+
+  function handleSearchPress(
+    data,
+    { geometry: { location, viewport } },
+  ) {
+    const { northeast, southwest } = viewport;
+    const { latitudeDelta, longitudeDelta } = calcutateViewport(northeast, southwest);
+    const { lat: latitude, lng: longitude } = location;
+    const nextRegion = {
+      latitude,
+      longitude,
+      latitudeDelta,
+      longitudeDelta,
+    };
     const {
       description: fullName,
       structured_formatting: { main_text: shortName },
@@ -85,17 +92,7 @@ function NewCourseScreen({ navigation }) {
           />
         ))}
       </MapView>
-      <GooglePlacesAutocomplete
-        styles={{ container: styles.searchBarContainer }}
-        placeholder="Search"
-        fetchDetails
-        onPress={handleSearchPress}
-        query={{
-          key: GOOGLE_API_KEY,
-          language: "ko",
-        }}
-        debounce={1000}
-      />
+      <GoogleSearchBar onPress={handleSearchPress} />
       <ScheduleContainer
         schedules={schedules}
         onChange={setSchedules}
@@ -109,7 +106,7 @@ function NewCourseScreen({ navigation }) {
           color="#FE7762"
         />
       </BoxButton>
-      <SafeAreaBottom />
+      <SafeArea />
     </View>
   );
 }
@@ -125,14 +122,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "40%",
     borderRadius: 20,
-  },
-  searchBarContainer: {
-    position: "absolute",
-    width: "90%",
-    height: "20%",
-    top: screenHeight * (4.2 / 10),
-    left: "5%",
-    zIndex: 1,
   },
 });
 

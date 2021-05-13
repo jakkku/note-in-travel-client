@@ -10,11 +10,11 @@ function TabBar({ navigation }) {
     <View style={styles.container}>
       <TabButton
         name="home"
-        onPress={() => nav.navigate("home")}
+        onPress={() => nav.navigate("Home")}
       />
       <TabButton
         name="user-alt"
-        onPress={() => nav.navigate("user")}
+        onPress={() => nav.navigate("User")}
       />
     </View>
   );

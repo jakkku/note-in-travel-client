@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { View, StyleSheet, Button } from "react-native";
 
 import Profile from "../components/shared/Profile";
+import SafeArea from "../components/shared/SafeArea";
 
 function UserScreen({ navigation }) {
   const { name, photoUrl } = useSelector((state) => state.user.value);
@@ -14,13 +15,14 @@ function UserScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <SafeArea />
       <Profile
         name={name}
         photoUrl={photoUrl}
       />
       {/* {TODO: edit this} */}
       {myCourses.map((course) => (
-        <Button title={course._id} onPress={() => handlePress(course._id)} />
+        <Button key={course._id} title={course._id} onPress={() => handlePress(course._id)} />
       ))}
     </View>
   );

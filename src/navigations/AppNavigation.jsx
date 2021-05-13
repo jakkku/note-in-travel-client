@@ -5,7 +5,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import MainTabNavigator from "./MainTabNavigator";
 import NewCourseScreen from "../screens/NewCourseScreen";
-import CourseDetailScreen from "../screens/CourseDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -18,7 +17,6 @@ function AppNavigation() {
   const serviceScreens = {
     Main: MainTabNavigator,
     NewCourse: NewCourseScreen,
-    CourseDetail: CourseDetailScreen,
   };
 
   return (
