@@ -2,10 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
 
 import fetchData from "../utils/fetchData";
+// TODO: delete this
+import MOCK from "../constants/mock";
 
 export const loginUser = createAsyncThunk(
   "user/loginUserStatus",
   async (user) => {
+    await SecureStore.deleteItemAsync("token");
     const response = await fetchData("POST", "/auth/login", user);
 
     await SecureStore.setItemAsync("token", response.token);
@@ -14,16 +17,8 @@ export const loginUser = createAsyncThunk(
   },
 );
 
-// TODO: delete thiss
-const mock = {
-  _id: "609be6e9df8a15356c13136f",
-  email: "test@test.com",
-  name: "test",
-  photoUrl: "https://lh3.googleusercontent.com/a/AATXAJzVxQACbbwpFSpdxU9IjpggSZFH483ZcYGk2PaO=s96-c",
-};
-
 const initialState = {
-  value: mock,
+  value: MOCK.user,
   error: null,
   status: "idle",
 };
