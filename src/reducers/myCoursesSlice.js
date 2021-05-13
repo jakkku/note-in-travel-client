@@ -13,10 +13,33 @@ export const saveMyCourse = createAsyncThunk(
 );
 
 // TODO: delete this
-const mock = [];
+const mock = [
+  {
+    isShared: false,
+    messages: [],
+    favorites: [],
+    _id: "609be719df8a15356c131372",
+    creator: "609be6e9df8a15356c13136f",
+    sites: [
+      {
+        _id: "609be719df8a15356c131373",
+        index: 1,
+        site: "609be718df8a15356c131370",
+      },
+      {
+        _id: "609be719df8a15356c131374",
+        index: 2,
+        site: "609be718df8a15356c131371",
+      },
+    ],
+    createdAt: "2021-05-12T14:32:57.362Z",
+    updatedAt: "2021-05-12T14:32:57.362Z",
+    __v: 0,
+  },
+];
 
 const initialState = {
-  items: null,
+  items: mock,
   error: null,
   status: "idle",
 };
@@ -42,7 +65,7 @@ const myCoursesSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },
@@ -62,7 +85,7 @@ const myCoursesSlice = createSlice({
     },
     [saveMyCourse.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },

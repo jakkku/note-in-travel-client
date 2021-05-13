@@ -16,14 +16,14 @@ export const loginUser = createAsyncThunk(
 
 // TODO: delete thiss
 const mock = {
-  _id: "60979c06cc5d7c4100b81ba4",
-  email: "a01081440011@gmail.com",
-  name: "sungjin kim",
+  _id: "609be6e9df8a15356c13136f",
+  email: "test@test.com",
+  name: "test",
   photoUrl: "https://lh3.googleusercontent.com/a/AATXAJzVxQACbbwpFSpdxU9IjpggSZFH483ZcYGk2PaO=s96-c",
 };
 
 const initialState = {
-  value: null,
+  value: mock,
   error: null,
   status: "idle",
 };
@@ -58,7 +58,7 @@ const userSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },
