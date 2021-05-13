@@ -44,6 +44,7 @@ module.exports = {
     "react/jsx-props-no-spreading": "off",
     "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/label-has-for": "off",
+    "react-hooks/exhaustive-deps": "warn",
 
     // expo
     "import/no-unresolved": [2, { ignore: ["@env"] }],
