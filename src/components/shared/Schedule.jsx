@@ -10,30 +10,30 @@ import {
 import VectorIcon from "./VectorIcon";
 
 function Schedule({
-  site,
+  schedule,
   onIndexPress,
   onLikePress,
   isSelected,
 }) {
   const favoriteSites = useSelector((state) => state.favoriteSites.items);
-  const isFavorite = favoriteSites?.find((favoriteSite) => favoriteSite.fullName === site.fullName);
+  const isFavorite = favoriteSites?.find((favoriteSite) => favoriteSite.fullName === schedule.site.fullName);
 
   return (
     <View style={styles.container}>
       <View>
         <TouchableOpacity
           style={[styles.indexContainer, isSelected && styles.selectedIndexContainer]}
-          onPress={() => onIndexPress(site)}
+          onPress={() => onIndexPress(schedule)}
         >
-          <Text style={styles.index}>{site.index}</Text>
+          <Text style={styles.index}>{schedule.index}</Text>
         </TouchableOpacity>
         <View style={styles.dash} />
       </View>
       <View style={styles.namesContainer}>
-        <Text style={styles.shortName}>{site.shortName}</Text>
-        <Text>{site.fullName}</Text>
+        <Text style={styles.shortName}>{schedule.site.shortName}</Text>
+        <Text>{schedule.site.fullName}</Text>
       </View>
-      <TouchableOpacity onPress={() => onLikePress(site)}>
+      <TouchableOpacity onPress={() => onLikePress(schedule)}>
         <VectorIcon
           type="FontAwesome"
           name={isFavorite ? "heart" : "heart-o"}

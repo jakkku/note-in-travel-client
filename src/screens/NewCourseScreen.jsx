@@ -26,7 +26,7 @@ function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status);
   const dispatch = useDispatch();
   const [region, setRegion] = useState(REGION.korea);
-  const [sites, setSites] = useState([]);
+  const [schedules, setSchedules] = useState([]);
 
   function handleSearchPress(data, details = null) {
     const { location, viewport } = details.geometry;
@@ -36,32 +36,37 @@ function NewCourseScreen({ navigation }) {
       structured_formatting: { main_text: shortName },
     } = data;
 
-    setSites((prev) => prev.concat({
+    setSchedules((prev) => prev.concat({
       index: prev.length + 1,
-      shortName,
-      fullName,
-      region: nextRegion,
+      site: {
+        shortName,
+        fullName,
+        region: nextRegion,
+      },
     }));
     setRegion(nextRegion);
   }
 
   async function handleSavePress() {
-    if (isLoading === "pending" || sites.length === 0) return;
-
-    const actionResult = await dispatch(saveMyCourse(sites));
+    if (isLoading === "pending" || schedules.length === 0) return;
 
     try {
+      const actionResult = await dispatch(saveMyCourse(schedules));
       const myCourse = unwrapResult(actionResult);
 
       navigation.navigate("CourseDetail", { id: myCourse._id });
     } catch (err) {
       // TODO: add error handling
-      console.log(err);
+      console.log(err.message);
     }
   }
 
   if (isLoading === "pending") {
-    return <ActivityIndicator size="large" />;
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
@@ -71,7 +76,7 @@ function NewCourseScreen({ navigation }) {
         provider={PROVIDER_GOOGLE}
         region={region}
       >
-        {sites.map((site) => (
+        {schedules.map(({ site }) => (
           <Marker
             key={site.fullName}
             coordinate={{ ...site.region }}
@@ -92,8 +97,8 @@ function NewCourseScreen({ navigation }) {
         debounce={1000}
       />
       <ScheduleContainer
-        sites={sites}
-        onChange={setSites}
+        schedules={schedules}
+        onChange={setSchedules}
       />
       <BoxButton
         text="SAVE"

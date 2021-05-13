@@ -5,41 +5,43 @@ import { useDispatch } from "react-redux";
 import Schedule from "./shared/Schedule";
 import { toggleSite } from "../reducers/favoriteSitesSlice";
 
-function ScheduleContainer({ sites, onChange, style }) {
+function ScheduleContainer({ schedules, onChange, style }) {
   const [selected, setSelected] = useState(null);
   const dispatch = useDispatch();
 
-  function handleIndexPress(site) {
+  function handleIndexPress(schedule) {
     if (!selected) {
-      setSelected(site);
+      setSelected(schedule);
       return;
     }
 
-    if (selected.fullName !== site.fullName) {
-      swapIndex(selected, site);
+    if (selected.site.fullName !== schedule.site.fullName) {
+      swapIndex(selected, schedule);
     }
 
     setSelected(null);
   }
 
-  function handleLikePress(site) {
-    dispatch(toggleSite(site));
+  function handleLikePress(schedule) {
+    dispatch(toggleSite(schedule));
   }
 
-  function swapIndex(site1, site2) {
-    [site1.index, site2.index] = [site2.index, site1.index];
-    onChange(sites.slice().sort((a, b) => a.index - b.index));
+  function swapIndex(schedule1, schedule2) {
+    [schedule1.index, schedule2.index] = [schedule2.index, schedule1.index];
+    const newSchedules = schedules.slice().sort((a, b) => a.index - b.index);
+
+    onChange(newSchedules);
   }
 
   return (
     <ScrollView style={{ ...styles.container, ...style }}>
-      {sites.map((site) => (
+      {schedules.map((schedule) => (
         <Schedule
-          key={site.fullName}
-          site={site}
+          key={schedule.site.fullName}
+          schedule={schedule}
           onIndexPress={handleIndexPress}
           onLikePress={handleLikePress}
-          isSelected={selected && selected.fullName === site.fullName}
+          isSelected={selected && selected.site.fullName === schedule.site.fullName}
         />
       ))}
     </ScrollView>
