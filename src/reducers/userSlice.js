@@ -2,10 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
 
 import fetchData from "../utils/fetchData";
+// TODO: delete this
+import MOCK from "../constants/mock";
 
 export const loginUser = createAsyncThunk(
   "user/loginUserStatus",
   async (user) => {
+    await SecureStore.deleteItemAsync("token");
     const response = await fetchData("POST", "/auth/login", user);
 
     await SecureStore.setItemAsync("token", response.token);
@@ -14,16 +17,8 @@ export const loginUser = createAsyncThunk(
   },
 );
 
-// TODO: delete thiss
-const mock = {
-  _id: "60979c06cc5d7c4100b81ba4",
-  email: "a01081440011@gmail.com",
-  name: "sungjin kim",
-  photoUrl: "https://lh3.googleusercontent.com/a/AATXAJzVxQACbbwpFSpdxU9IjpggSZFH483ZcYGk2PaO=s96-c",
-};
-
 const initialState = {
-  value: null,
+  value: MOCK.user,
   error: null,
   status: "idle",
 };
@@ -58,7 +53,7 @@ const userSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },

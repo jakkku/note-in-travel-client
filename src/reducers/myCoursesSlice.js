@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import fetchData from "../utils/fetchData";
 
 import { loginUser } from "./userSlice";
+// TODO: delete this
+import MOCK from "../constants/mock";
 
 export const saveMyCourse = createAsyncThunk(
   "myCourses/saveMyCourseStatus",
@@ -12,11 +14,8 @@ export const saveMyCourse = createAsyncThunk(
   },
 );
 
-// TODO: delete this
-const mock = [];
-
 const initialState = {
-  items: null,
+  items: MOCK.myCourse,
   error: null,
   status: "idle",
 };
@@ -42,7 +41,7 @@ const myCoursesSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },
@@ -62,7 +61,7 @@ const myCoursesSlice = createSlice({
     },
     [saveMyCourse.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },

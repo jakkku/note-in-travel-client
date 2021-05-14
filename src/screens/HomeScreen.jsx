@@ -3,17 +3,15 @@ import { useSelector } from "react-redux";
 import { View, StyleSheet } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
-import Profile from "../components/Profile";
+import Profile from "../components/shared/Profile";
 import REGION from "../constants/region";
-import BoxButton from "../components/BoxButton";
-import { selectPhotoUrl, selectUserName } from "../reducers/userSlice";
+import BoxButton from "../components/shared/BoxButton";
 
-function MainScreen({ navigation }) {
-  const userName = useSelector(selectUserName);
-  const photoUrl = useSelector(selectPhotoUrl);
+function HomeScreen({ navigation }) {
+  const { name, photoUrl } = useSelector((state) => state.user.value);
 
   function handlePress() {
-    navigation.navigate("NewCourseScreen");
+    navigation.navigate("NewCourse");
   }
 
   return (
@@ -26,7 +24,7 @@ function MainScreen({ navigation }) {
         scrollEnabled={false}
       />
       <Profile
-        name={userName}
+        name={name}
         photoUrl={photoUrl}
       />
       <BoxButton
@@ -49,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainScreen;
+export default HomeScreen;

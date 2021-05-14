@@ -6,7 +6,7 @@ import { loginUser } from "./userSlice";
 const mock = [];
 
 const initialState = {
-  items: null,
+  items: [],
   error: null,
   status: "idle",
 };
@@ -45,7 +45,7 @@ const favoriteSitesSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },
@@ -55,3 +55,5 @@ const favoriteSitesSlice = createSlice({
 export const { toggleSite } = favoriteSitesSlice.actions;
 
 export default favoriteSitesSlice.reducer;
+
+export const selectFavoriteSites = (state) => state.favoriteSites.items;

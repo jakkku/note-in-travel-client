@@ -1,92 +1,108 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   View,
   StyleSheet,
-  Dimensions,
+  ActivityIndicator,
 } from "react-native";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { GOOGLE_API_KEY } from "@env";
 
-import ScheduleContainer from "../components/ScheduleContainer";
-import BoxButton from "../components/BoxButton";
+import BoxButton from "../components/shared/BoxButton";
 import VectorIcon from "../components/shared/VectorIcon";
-import SafeAreaBottom from "../components/shared/SafeAreaBottom";
+import SafeArea from "../components/shared/SafeArea";
+import GoogleMap from "../components/shared/GoogleMap";
+import GoogleSearchBar from "../components/shared/GoogleSearchBar";
+import ScheduleList from "../components/ScheduleList";
 
 import REGION from "../constants/region";
-import calculateRegion from "../utils/calcutateRegion";
+import THEME from "../constants/theme";
+import useRegion from "../hooks/useRegion";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
+import calcutateViewport from "../utils/calcutateViewport";
 
-const { height: screenHeight } = Dimensions.get("screen");
-
-function NewCourseScreen() {
-  const [region, setRegion] = useState(REGION.korea);
-  const [sites, setSites] = useState([]);
+function NewCourseScreen({ navigation }) {
+  const isLoading = useSelector((state) => state.myCourses.status);
   const dispatch = useDispatch();
 
-  function handleSearchPress(data, details = null) {
-    const { location, viewport } = details.geometry;
-    const nextRegion = calculateRegion(location, viewport);
+  const { region, changeRegion } = useRegion(REGION.korea);
+  const [schedules, setSchedules] = useState([]);
+
+  function handleSearchPress(
+    data,
+    { geometry: { location, viewport } },
+  ) {
+    const { northeast, southwest } = viewport;
+    const { latitudeDelta, longitudeDelta } = calcutateViewport(northeast, southwest);
+    const { lat: latitude, lng: longitude } = location;
+    const nextRegion = {
+      latitude,
+      longitude,
+      latitudeDelta,
+      longitudeDelta,
+    };
     const {
       description: fullName,
       structured_formatting: { main_text: shortName },
     } = data;
 
-    setSites((prev) => prev.concat({
-      index: prev.length + 1,
-      shortName,
-      fullName,
-      region: nextRegion,
-    }));
-    setRegion(nextRegion);
+    const newSchedule = {
+      index: schedules.length + 1,
+      site: {
+        shortName,
+        fullName,
+        region: nextRegion,
+      },
+    };
+    const newSchedules = schedules.concat(newSchedule);
+
+    setSchedules(newSchedules);
+    changeRegion(newSchedules.map((schedule) => schedule.site.region));
   }
 
-  function handleSavePress() {
-    dispatch(saveMyCourse(sites));
+  async function handleSavePressAsync() {
+    if (isLoading === "pending" || schedules.length === 0) return;
+
+    try {
+      const actionResult = await dispatch(saveMyCourse(schedules));
+      const myCourse = unwrapResult(actionResult);
+
+      navigation.navigate("CourseDetail", { id: myCourse._id });
+    } catch (err) {
+      // TODO: add error handling
+      console.log(err.message);
+    }
+  }
+
+  if (isLoading === "pending") {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <MapView
+      <GoogleMap
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
         region={region}
-      >
-        {sites.map((site) => (
-          <Marker
-            key={site.fullName}
-            coordinate={{ ...site.region }}
-            title={site.shortName}
-            description={site.fullName}
-          />
-        ))}
-      </MapView>
-      <GooglePlacesAutocomplete
-        styles={{ container: styles.searchBarContainer }}
-        placeholder="Search"
-        fetchDetails
-        onPress={handleSearchPress}
-        query={{
-          key: GOOGLE_API_KEY,
-          language: "ko",
-        }}
-        debounce={1000}
+        schedules={schedules}
       />
-      <ScheduleContainer
-        sites={sites}
-        onChange={setSites}
+      <GoogleSearchBar onPress={handleSearchPress} />
+      <ScheduleList
+        schedules={schedules}
+        onChange={setSchedules}
       />
       <BoxButton
         text="SAVE"
-        onPress={handleSavePress}
+        onPress={handleSavePressAsync}
       >
         <VectorIcon
           name="plus-circle"
-          color="#FE7762"
+          color={THEME.color.accent}
         />
       </BoxButton>
-      <SafeAreaBottom />
+      <SafeArea />
     </View>
   );
 }
@@ -99,17 +115,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   map: {
-    width: "100%",
     height: "40%",
     borderRadius: 20,
-  },
-  searchBarContainer: {
-    position: "absolute",
-    width: "90%",
-    height: "20%",
-    top: screenHeight * (4.2 / 10),
-    left: "5%",
-    zIndex: 1,
   },
 });
 

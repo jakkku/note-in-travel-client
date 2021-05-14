@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Text,
   View,
@@ -7,26 +7,28 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import VectorIcon from "./shared/VectorIcon";
-import { toggleSite } from "../reducers/favoriteSitesSlice";
+import LikeButton from "./shared/LikeButton";
 
-function Schedule({ site, onIndexPress, isSelected }) {
-  const favoriteSites = useSelector((state) => state.favoriteSites.items);
-  const isFavorite = favoriteSites?.find((favoriteSite) => favoriteSite.fullName === site.fullName);
-  const dispatch = useDispatch();
+import THEME from "../constants/theme";
+import { selectFavoriteSites } from "../reducers/favoriteSitesSlice";
 
-  function handleLikePress() {
-    dispatch(toggleSite(site));
-  }
+function Schedule({
+  schedule: { index: scheduleIndex, site },
+  onIndexPress,
+  onLikePress,
+  accent,
+}) {
+  const favoriteSites = useSelector(selectFavoriteSites);
+  const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === site.fullName);
 
   return (
     <View style={styles.container}>
       <View>
         <TouchableOpacity
-          style={[styles.indexContainer, isSelected && styles.selectedIndexContainer]}
-          onPress={() => onIndexPress(site)}
+          style={[styles.indexContainer, accent && styles.accent]}
+          onPress={() => onIndexPress(scheduleIndex)}
         >
-          <Text style={styles.index}>{site.index}</Text>
+          <Text style={styles.index}>{scheduleIndex}</Text>
         </TouchableOpacity>
         <View style={styles.dash} />
       </View>
@@ -34,13 +36,10 @@ function Schedule({ site, onIndexPress, isSelected }) {
         <Text style={styles.shortName}>{site.shortName}</Text>
         <Text>{site.fullName}</Text>
       </View>
-      <TouchableOpacity onPress={handleLikePress}>
-        <VectorIcon
-          type="FontAwesome"
-          name={isFavorite ? "heart" : "heart-o"}
-          color="#FE7762"
-        />
-      </TouchableOpacity>
+      <LikeButton
+        isClicked={isFavorite}
+        onPress={() => onLikePress(site)}
+      />
     </View>
   );
 }
@@ -57,10 +56,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#4FD4C2",
+    backgroundColor: THEME.color.primitive,
   },
-  selectedIndexContainer: {
-    backgroundColor: "#FE7762",
+  accent: {
+    backgroundColor: THEME.color.accent,
   },
   index: {
     color: "#FFFFFF",
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRightWidth: 2,
     borderStyle: "solid",
-    borderColor: "#4FD4C2",
+    borderColor: THEME.color.primitive,
   },
   namesContainer: {
     width: "80%",

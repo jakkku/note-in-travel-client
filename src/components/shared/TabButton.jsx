@@ -1,15 +1,20 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 
-import VectorIcon from "./shared/VectorIcon";
+import VectorIcon from "./VectorIcon";
 
 function TabButton({
   name,
+  type,
   onPress,
+  style,
 }) {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <VectorIcon name={name} />
+    <TouchableOpacity
+      style={style}
+      onPress={onPress}
+    >
+      <VectorIcon type={type} name={name} />
     </TouchableOpacity>
   );
 }

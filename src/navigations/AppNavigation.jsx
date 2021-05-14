@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import WelcomeScreen from "../screens/WelcomeScreen";
-import NewCourseScreen from "../screens/NewCourseScreen";
 import MainTabNavigator from "./MainTabNavigator";
+import NewCourseScreen from "../screens/NewCourseScreen";
 
 const Stack = createStackNavigator();
 
@@ -16,7 +16,7 @@ function AppNavigation() {
   };
   const serviceScreens = {
     Main: MainTabNavigator,
-    NewCourseScreen,
+    NewCourse: NewCourseScreen,
   };
 
   return (

@@ -6,7 +6,7 @@ import { loginUser } from "./userSlice";
 const mock = [];
 
 const initialState = {
-  items: null,
+  items: [],
   error: null,
   status: "idle",
 };
@@ -31,7 +31,7 @@ const favoriteCoursesSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       if (state.status === "pending") {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.status = "idle";
       }
     },
