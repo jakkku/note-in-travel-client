@@ -1,7 +1,5 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 
-import { loginUser } from "./userSlice";
-
 // TODO: delete this
 const mock = [];
 
@@ -15,6 +13,11 @@ const favoriteSitesSlice = createSlice({
   name: "favoriteSites",
   initialState,
   reducers: {
+    initFavoriteSites: (state, action) => {
+      const favoriteSites = action.payload;
+
+      state.items = favoriteSites;
+    },
     toggleSite: (state, action) => {
       const favoriteSites = state.items;
       const { fullName, shortName, region } = action.payload;
@@ -29,30 +32,9 @@ const favoriteSitesSlice = createSlice({
         });
     },
   },
-  extraReducers: {
-    [loginUser.pending]: (state) => {
-      if (state.status === "idle") {
-        state.status = "pending";
-      }
-    },
-    [loginUser.fulfilled]: (state, action) => {
-      if (state.status === "pending") {
-        const { favoriteSites } = action.payload;
-
-        state.items = favoriteSites;
-        state.status = "idle";
-      }
-    },
-    [loginUser.rejected]: (state, action) => {
-      if (state.status === "pending") {
-        state.error = action.error.message;
-        state.status = "idle";
-      }
-    },
-  },
 });
 
-export const { toggleSite } = favoriteSitesSlice.actions;
+export const { initFavoriteSites, toggleSite } = favoriteSitesSlice.actions;
 
 export default favoriteSitesSlice.reducer;
 
