@@ -11,30 +11,23 @@ import { loginUser } from "../reducers/userSlice";
 import loginWithGoogleAsync from "../utils/loginWithGoogleAsync";
 
 function WelcomeScreen() {
-  const loginStatus = useSelector((state) => state.user.status);
+  const isLoading = useSelector((state) => state.user.status === "pending");
   const dispath = useDispatch();
 
   async function handleClick() {
     const result = await loginWithGoogleAsync();
 
-    if (!result.user) {
-      // TODO: delete this
-      console.log(`cancelled: ${result.cancelled || "none"}, error: ${result.error || "none"}`);
-      return;
-    }
+    if (!result.user) return;
 
     dispath(loginUser(result.user));
   }
 
   return (
-    <>
-      <View style={styles.container}>
-        {loginStatus === "pending"
-        && <ActivityIndicator size="large" />}
-        {loginStatus === "idle"
-        && <Button title="Get Start" onPress={handleClick} />}
-      </View>
-    </>
+    <View style={styles.container}>
+      {isLoading
+        ? <ActivityIndicator size="large" />
+        : <Button title="Get Start" onPress={handleClick} />}
+    </View>
   );
 }
 

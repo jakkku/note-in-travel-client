@@ -21,7 +21,7 @@ import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
 
 function NewCourseScreen({ navigation }) {
-  const isLoading = useSelector((state) => state.myCourses.status);
+  const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
   const { region, changeRegion } = useRegion(REGION.korea);
@@ -60,7 +60,7 @@ function NewCourseScreen({ navigation }) {
   }
 
   async function handleSavePressAsync() {
-    if (isLoading === "pending" || schedules.length === 0) return;
+    if (isLoading || schedules.length === 0) return;
 
     try {
       const actionResult = await dispatch(saveMyCourse(schedules));
@@ -73,36 +73,34 @@ function NewCourseScreen({ navigation }) {
     }
   }
 
-  if (isLoading === "pending") {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <GoogleMap
-        style={styles.map}
-        region={region}
-        schedules={schedules}
-      />
-      <GoogleSearchBar onPress={handleSearchPress} />
-      <ScheduleList
-        schedules={schedules}
-        onChange={setSchedules}
-      />
-      <BoxButton
-        text="SAVE"
-        onPress={handleSavePressAsync}
-      >
-        <VectorIcon
-          name="plus-circle"
-          color={THEME.color.accent}
-        />
-      </BoxButton>
-      <SafeArea />
+      {isLoading
+        ? <ActivityIndicator size="large" />
+        : (
+          <>
+            <GoogleMap
+              style={styles.map}
+              region={region}
+              schedules={schedules}
+            />
+            <GoogleSearchBar onPress={handleSearchPress} />
+            <ScheduleList
+              schedules={schedules}
+              onChange={setSchedules}
+            />
+            <BoxButton
+              text="SAVE"
+              onPress={handleSavePressAsync}
+            >
+              <VectorIcon
+                name="plus-circle"
+                color={THEME.color.accent}
+              />
+            </BoxButton>
+            <SafeArea />
+          </>
+        )}
     </View>
   );
 }

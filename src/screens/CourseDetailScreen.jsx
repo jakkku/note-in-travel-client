@@ -25,6 +25,7 @@ function CourseDetailScreen({ route }) {
   const { id } = route.params;
 
   useEffect(() => {
+    setIsLoading(true);
     (async function fetchCourseById(courseId) {
       try {
         const response = await fetchData("GET", `/course/${courseId}`);
@@ -40,24 +41,21 @@ function CourseDetailScreen({ route }) {
     })(id);
   }, [id]);
 
-  // TODO: add loading component
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <GoogleMap
-        region={region}
-        schedules={course.schedules}
-        myLocation={myLocation}
-        style={styles.map}
-      />
-      <ScheduleList schedules={course.schedules} />
+      {isLoading
+        ? <ActivityIndicator size="large" />
+        : (
+          <>
+            <GoogleMap
+              region={region}
+              schedules={course.schedules}
+              myLocation={myLocation}
+              style={styles.map}
+            />
+            <ScheduleList schedules={course.schedules} />
+          </>
+        )}
     </View>
   );
 }
