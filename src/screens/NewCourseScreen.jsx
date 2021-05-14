@@ -12,10 +12,13 @@ import VectorIcon from "../components/shared/VectorIcon";
 import SafeArea from "../components/shared/SafeArea";
 import GoogleMap from "../components/shared/GoogleMap";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
+import ModalWithBackground from "../components/shared/ModalWithBackground";
+import Form from "../components/Form";
 import ScheduleList from "../components/ScheduleList";
 
 import REGION from "../constants/region";
 import THEME from "../constants/theme";
+import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
@@ -24,8 +27,9 @@ function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
-  const { region, changeRegion } = useRegion(REGION.korea);
   const [schedules, setSchedules] = useState([]);
+  const { region, changeRegion } = useRegion(REGION.korea);
+  const { isModalOpen, openModal, closeModal } = useModal(false);
 
   function handleSearchPress(
     data,
@@ -59,13 +63,20 @@ function NewCourseScreen({ navigation }) {
     changeRegion(newSchedules.map((schedule) => schedule.site.region));
   }
 
-  async function handleSavePressAsync() {
+  function handleSavePress() {
+    if (schedules.length === 0) return;
+
+    openModal();
+  }
+
+  async function handleFormSubmitAsync(courseName) {
     if (isLoading || schedules.length === 0) return;
 
     try {
-      const actionResult = await dispatch(saveMyCourse(schedules));
+      const actionResult = await dispatch(saveMyCourse({ name: courseName, schedules }));
       const myCourse = unwrapResult(actionResult);
 
+      closeModal();
       navigation.navigate("CourseDetail", { id: myCourse._id });
     } catch (err) {
       // TODO: add error handling
@@ -74,7 +85,7 @@ function NewCourseScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isLoading && styles.loading]}>
       {isLoading
         ? <ActivityIndicator size="large" />
         : (
@@ -91,7 +102,7 @@ function NewCourseScreen({ navigation }) {
             />
             <BoxButton
               text="SAVE"
-              onPress={handleSavePressAsync}
+              onPress={handleSavePress}
             >
               <VectorIcon
                 name="plus-circle"
@@ -99,6 +110,16 @@ function NewCourseScreen({ navigation }) {
               />
             </BoxButton>
             <SafeArea />
+            <ModalWithBackground
+              isOpen={isModalOpen}
+              onClose={closeModal}
+            >
+              <Form
+                style={styles.modalForm}
+                onSubmit={handleFormSubmitAsync}
+                onClose={closeModal}
+              />
+            </ModalWithBackground>
           </>
         )}
     </View>
@@ -111,6 +132,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
+  },
+  loading: {
+    justifyContent: "center",
   },
   map: {
     height: "40%",
