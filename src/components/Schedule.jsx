@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Text,
   View,
@@ -10,16 +10,19 @@ import {
 import LikeButton from "./shared/LikeButton";
 
 import THEME from "../constants/theme";
-import { selectFavoriteSites } from "../reducers/favoriteSitesSlice";
+import { toggleSite, selectFavoriteSiteBySiteFullName } from "../reducers/favoriteSitesSlice";
 
 function Schedule({
   schedule: { index: scheduleIndex, site },
   onIndexPress,
-  onLikePress,
   accent,
 }) {
-  const favoriteSites = useSelector(selectFavoriteSites);
-  const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === site.fullName);
+  const isFavorite = useSelector((state) => !!selectFavoriteSiteBySiteFullName(state, site.fullName));
+  const dispatch = useDispatch();
+
+  function handleLikePress() {
+    dispatch(toggleSite(site));
+  }
 
   return (
     <View style={styles.container}>
@@ -38,7 +41,7 @@ function Schedule({
       </View>
       <LikeButton
         isClicked={isFavorite}
-        onPress={() => onLikePress(site)}
+        onPress={handleLikePress}
       />
     </View>
   );

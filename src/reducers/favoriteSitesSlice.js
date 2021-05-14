@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 
 import { loginUser } from "./userSlice";
 
@@ -57,3 +57,10 @@ export const { toggleSite } = favoriteSitesSlice.actions;
 export default favoriteSitesSlice.reducer;
 
 export const selectFavoriteSites = (state) => state.favoriteSites.items;
+
+export const selectFavoriteSiteBySiteFullName = createSelector(
+  [selectFavoriteSites, (_, siteFullName) => siteFullName],
+  (favoriteSites, siteFullName) => (
+    favoriteSites.find((favoriteSite) => favoriteSite.fullName === siteFullName)
+  ),
+);
