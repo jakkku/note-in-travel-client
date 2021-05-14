@@ -1,5 +1,7 @@
 import React from "react";
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
+
+import Title from "./Title";
 
 function BoxButton({
   text,
@@ -9,10 +11,10 @@ function BoxButton({
 }) {
   return (
     <TouchableOpacity
-      style={{ ...styles.container, ...style }}
+      style={[styles.container, style]}
       onPress={onPress}
     >
-      <Text style={styles.text}>{text}</Text>
+      <Title text={text} />
       {children}
     </TouchableOpacity>
   );
@@ -27,10 +29,6 @@ const styles = StyleSheet.create({
     padding: "8%",
     borderRadius: 20,
     backgroundColor: "#DEDFE3",
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
   },
 });
 

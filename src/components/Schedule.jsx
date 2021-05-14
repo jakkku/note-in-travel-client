@@ -8,6 +8,7 @@ import {
 } from "react-native";
 
 import LikeButton from "./shared/LikeButton";
+import Title from "./shared/Title";
 
 import THEME from "../constants/theme";
 import { toggleSite, selectFavoriteSiteBySiteFullName } from "../reducers/favoriteSitesSlice";
@@ -36,7 +37,7 @@ function Schedule({
         <View style={styles.dash} />
       </View>
       <View style={styles.namesContainer}>
-        <Text style={styles.shortName}>{site.shortName}</Text>
+        <Title text={site.shortName} />
         <Text>{site.fullName}</Text>
       </View>
       <LikeButton
@@ -80,10 +81,6 @@ const styles = StyleSheet.create({
   namesContainer: {
     width: "80%",
     padding: "3%",
-  },
-  shortName: {
-    fontSize: 20,
-    fontWeight: "bold",
   },
 });
 
