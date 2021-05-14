@@ -6,7 +6,7 @@ import { loginUser } from "./userSlice";
 const mock = [];
 
 const initialState = {
-  items: null,
+  items: [],
   error: null,
   status: "idle",
 };

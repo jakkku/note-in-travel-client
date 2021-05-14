@@ -6,24 +6,26 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 
 import BoxButton from "../components/shared/BoxButton";
 import VectorIcon from "../components/shared/VectorIcon";
 import SafeArea from "../components/shared/SafeArea";
+import GoogleMap from "../components/shared/GoogleMap";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
-import ScheduleContainer from "../components/ScheduleContainer";
+import ScheduleList from "../components/ScheduleList";
 
 import REGION from "../constants/region";
-import calcutateViewport from "../utils/calcutateViewport";
+import THEME from "../constants/theme";
+import useRegion from "../hooks/useRegion";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
+import calcutateViewport from "../utils/calcutateViewport";
 
 function NewCourseScreen({ navigation }) {
-  const [region, setRegion] = useState(REGION.korea);
-  const [schedules, setSchedules] = useState([]);
-
   const isLoading = useSelector((state) => state.myCourses.status);
   const dispatch = useDispatch();
+
+  const { region, changeRegion } = useRegion(REGION.korea);
+  const [schedules, setSchedules] = useState([]);
 
   function handleSearchPress(
     data,
@@ -43,18 +45,21 @@ function NewCourseScreen({ navigation }) {
       structured_formatting: { main_text: shortName },
     } = data;
 
-    setSchedules((prev) => prev.concat({
-      index: prev.length + 1,
+    const newSchedule = {
+      index: schedules.length + 1,
       site: {
         shortName,
         fullName,
         region: nextRegion,
       },
-    }));
-    setRegion(nextRegion);
+    };
+    const newSchedules = schedules.concat(newSchedule);
+
+    setSchedules(newSchedules);
+    changeRegion(newSchedules.map((schedule) => schedule.site.region));
   }
 
-  async function handleSavePress() {
+  async function handleSavePressAsync() {
     if (isLoading === "pending" || schedules.length === 0) return;
 
     try {
@@ -78,32 +83,23 @@ function NewCourseScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <MapView
+      <GoogleMap
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
         region={region}
-      >
-        {schedules.map(({ site }) => (
-          <Marker
-            key={site.fullName}
-            coordinate={{ ...site.region }}
-            title={site.shortName}
-            description={site.fullName}
-          />
-        ))}
-      </MapView>
+        schedules={schedules}
+      />
       <GoogleSearchBar onPress={handleSearchPress} />
-      <ScheduleContainer
+      <ScheduleList
         schedules={schedules}
         onChange={setSchedules}
       />
       <BoxButton
         text="SAVE"
-        onPress={handleSavePress}
+        onPress={handleSavePressAsync}
       >
         <VectorIcon
           name="plus-circle"
-          color="#FE7762"
+          color={THEME.color.accent}
         />
       </BoxButton>
       <SafeArea />
@@ -119,7 +115,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   map: {
-    width: "100%",
     height: "40%",
     borderRadius: 20,
   },

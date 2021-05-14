@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useSelector } from "react-redux";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 
-import ScheduleContainer from "../components/ScheduleContainer";
+import GoogleMap from "../components/shared/GoogleMap";
+import ScheduleList from "../components/ScheduleList";
 
 import fetchData from "../utils/fetchData";
 import useRegion from "../hooks/useRegion";
+import useMyLocation from "../hooks/useMyLocation";
+import { selectMode } from "../reducers/modeSlice";
 
 function CourseDetailScreen({ route }) {
+  const curMode = useSelector(selectMode);
+
   const [isLoading, setIsLoading] = useState(true);
   const [course, setCourse] = useState(null);
   const { region, changeRegion } = useRegion({});
+  const myLocation = useMyLocation(curMode === "active");
+
   const { id } = route.params;
 
   useEffect(() => {
-    if (course || !id) return;
-
     (async function fetchCourseById(courseId) {
       try {
         const response = await fetchData("GET", `/course/${courseId}`);
@@ -29,7 +38,7 @@ function CourseDetailScreen({ route }) {
         console.log(err.message);
       }
     })(id);
-  }, [course, id]);
+  }, [id]);
 
   // TODO: add loading component
   if (isLoading) {
@@ -42,21 +51,13 @@ function CourseDetailScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider={PROVIDER_GOOGLE}
+      <GoogleMap
         region={region}
-      >
-        {course.schedules.map(({ site }) => (
-          <Marker
-            key={site.fullName}
-            coordinate={{ ...site.region }}
-            title={site.shortName}
-            description={site.fullName}
-          />
-        ))}
-      </MapView>
-      <ScheduleContainer schedules={course.schedules} />
+        schedules={course.schedules}
+        myLocation={myLocation}
+        style={styles.map}
+      />
+      <ScheduleList schedules={course.schedules} />
     </View>
   );
 }

@@ -7,39 +7,39 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import VectorIcon from "./VectorIcon";
+import LikeButton from "./shared/LikeButton";
+
+import THEME from "../constants/theme";
+import { selectFavoriteSites } from "../reducers/favoriteSitesSlice";
 
 function Schedule({
-  schedule,
+  schedule: { index: scheduleIndex, site },
   onIndexPress,
   onLikePress,
-  isSelected,
+  accent,
 }) {
-  const favoriteSites = useSelector((state) => state.favoriteSites.items);
-  const isFavorite = favoriteSites?.find((favoriteSite) => favoriteSite.fullName === schedule.site.fullName);
+  const favoriteSites = useSelector(selectFavoriteSites);
+  const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === site.fullName);
 
   return (
     <View style={styles.container}>
       <View>
         <TouchableOpacity
-          style={[styles.indexContainer, isSelected && styles.selectedIndexContainer]}
-          onPress={() => onIndexPress(schedule)}
+          style={[styles.indexContainer, accent && styles.accent]}
+          onPress={() => onIndexPress(scheduleIndex)}
         >
-          <Text style={styles.index}>{schedule.index}</Text>
+          <Text style={styles.index}>{scheduleIndex}</Text>
         </TouchableOpacity>
         <View style={styles.dash} />
       </View>
       <View style={styles.namesContainer}>
-        <Text style={styles.shortName}>{schedule.site.shortName}</Text>
-        <Text>{schedule.site.fullName}</Text>
+        <Text style={styles.shortName}>{site.shortName}</Text>
+        <Text>{site.fullName}</Text>
       </View>
-      <TouchableOpacity onPress={() => onLikePress(schedule)}>
-        <VectorIcon
-          type="FontAwesome"
-          name={isFavorite ? "heart" : "heart-o"}
-          color="#FE7762"
-        />
-      </TouchableOpacity>
+      <LikeButton
+        isClicked={isFavorite}
+        onPress={() => onLikePress(site)}
+      />
     </View>
   );
 }
@@ -56,10 +56,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#4FD4C2",
+    backgroundColor: THEME.color.primitive,
   },
-  selectedIndexContainer: {
-    backgroundColor: "#FE7762",
+  accent: {
+    backgroundColor: THEME.color.accent,
   },
   index: {
     color: "#FFFFFF",
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRightWidth: 2,
     borderStyle: "solid",
-    borderColor: "#4FD4C2",
+    borderColor: THEME.color.primitive,
   },
   namesContainer: {
     width: "80%",

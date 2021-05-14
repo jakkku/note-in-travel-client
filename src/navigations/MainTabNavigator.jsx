@@ -12,7 +12,7 @@ function MainTabNavigator() {
   return (
     <Tab.Navigator
       backBehavior="initialRoute"
-      tabBar={(navigation) => <TabBar navigation={navigation} />}
+      tabBar={(props) => <TabBar {...props} />}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="User" component={UserScreen} />

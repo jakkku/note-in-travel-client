@@ -5,7 +5,7 @@ import { GOOGLE_API_KEY } from "@env";
 
 function GoogleSearchBar({ onPress, style, debounce = 1000 }) {
   return (
-    <View style={{ ...styles.container, ...style }}>
+    <View style={[styles.container, style]}>
       <GooglePlacesAutocomplete
         styles={{ container: styles.searchBarContainer }}
         placeholder="Search"

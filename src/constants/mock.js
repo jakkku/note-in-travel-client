@@ -6,26 +6,50 @@ export default {
     name: "test",
     photoUrl: "https://lh3.googleusercontent.com/a/AATXAJzVxQACbbwpFSpdxU9IjpggSZFH483ZcYGk2PaO=s96-c",
   },
-  myCourse: [{
-    isShared: false,
-    messages: [],
-    favorites: [],
-    _id: "609cc39c10d52219351ad026",
-    creator: "609cc37010d52219351ad023",
-    schedules: [
-      {
-        _id: "609cc39c10d52219351ad027",
-        index: 1,
-        site: "609cc39b10d52219351ad024",
-      },
-      {
-        _id: "609cc39c10d52219351ad028",
-        index: 2,
-        site: "609cc39b10d52219351ad025",
-      },
-    ],
-    createdAt: "2021-05-13T06:13:48.008Z",
-    updatedAt: "2021-05-13T06:13:48.008Z",
-    __v: 0,
-  }],
+  myCourse: [
+    {
+      isShared: false,
+      messages: [],
+      favorites: [],
+      _id: "609cc39c10d52219351ad026",
+      creator: "609cc37010d52219351ad023",
+      schedules: [
+        {
+          _id: "609cc39c10d52219351ad027",
+          index: 1,
+          site: "609cc39b10d52219351ad024",
+        },
+        {
+          _id: "609cc39c10d52219351ad028",
+          index: 2,
+          site: "609cc39b10d52219351ad025",
+        },
+      ],
+      createdAt: "2021-05-13T06:13:48.008Z",
+      updatedAt: "2021-05-13T06:13:48.008Z",
+      __v: 0,
+    },
+    {
+      isShared: false,
+      messages: [],
+      favorites: [],
+      _id: "609d20db5d4e2c2abd45230a",
+      creator: "609cc37010d52219351ad023",
+      schedules: [
+        {
+          _id: "609d20db5d4e2c2abd45230b",
+          index: 1,
+          site: "609d20db5d4e2c2abd452309",
+        },
+        {
+          _id: "609d20db5d4e2c2abd45230c",
+          index: 2,
+          site: "609d20db5d4e2c2abd452308",
+        },
+      ],
+      createdAt: "2021-05-13T12:51:39.660Z",
+      updatedAt: "2021-05-13T12:51:39.660Z",
+      __v: 0,
+    },
+  ],
 };

@@ -2,9 +2,9 @@ import { useState } from "react";
 
 import calculateRegion from "../utils/calculateRegion";
 
-function useRegion(inputRegion = {}) {
+function useRegion(regions = {}) {
   const [region, setRegion] = useState(() => {
-    let initialRegion = inputRegion;
+    let initialRegion = regions;
 
     if (initialRegion.length > 0) {
       initialRegion = calculateRegion(initialRegion);
