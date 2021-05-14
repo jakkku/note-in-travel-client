@@ -3,19 +3,21 @@ import { StyleSheet, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_API_KEY } from "@env";
 
-function GoogleSearchBar({ onPress, style, debounce = 1000 }) {
+import MAP from "../../constants/map";
+
+function GoogleSearchBar({ onPress, style }) {
   return (
     <View style={[styles.container, style]}>
       <GooglePlacesAutocomplete
         styles={{ container: styles.searchBarContainer }}
-        placeholder="Search"
+        placeholder={MAP.search.placeholder}
         fetchDetails
         onPress={onPress}
         query={{
           key: GOOGLE_API_KEY,
-          language: "ko",
+          language: MAP.search.language,
         }}
-        debounce={debounce}
+        debounce={MAP.search.debounce}
       />
     </View>
   );
