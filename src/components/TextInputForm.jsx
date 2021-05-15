@@ -8,7 +8,12 @@ import THEME from "../constants/theme";
 
 import IconButton from "./shared/IconButton";
 
-function Form({ onSubmit, onClose, style }) {
+function TextInputForm({
+  placeholder,
+  onSubmit,
+  onClose,
+  style,
+}) {
   const [text, setText] = useState("");
 
   function handlePress() {
@@ -21,7 +26,7 @@ function Form({ onSubmit, onClose, style }) {
     <View style={[styles.container, style]}>
       <TextInput
         style={styles.textInput}
-        placeholder="여행의 제목을 입력하세요."
+        placeholder={placeholder}
         placeholderTextColor="gray"
         maxLength={10}
         onChangeText={setText}
@@ -69,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Form;
+export default TextInputForm;

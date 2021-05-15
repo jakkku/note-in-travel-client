@@ -7,22 +7,22 @@ import {
   ActivityIndicator,
 } from "react-native";
 
+import Title from "../components/shared/Title";
 import SafeArea from "../components/shared/SafeArea";
 import GoogleMap from "../components/shared/GoogleMap";
+import IconButton from "../components/shared/IconButton";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
 import ModalWithBackground from "../components/shared/ModalWithBackground";
-import Form from "../components/Form";
 import ScheduleList from "../components/ScheduleList";
+import TextInputForm from "../components/TextInputForm";
 
-import REGION from "../constants/region";
 import THEME from "../constants/theme";
+import REGION from "../constants/region";
 import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
+import useErrorMessage from "../hooks/useErrorMsg";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
-import IconButton from "../components/shared/IconButton";
-import useErrorMessage from "../hooks/useErrorMsg";
-import Title from "../components/shared/Title";
 
 function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
@@ -112,8 +112,9 @@ function NewCourseScreen({ navigation }) {
         {isLoading
           ? <ActivityIndicator size="large" />
           : (
-            <Form
+            <TextInputForm
               style={styles.modalForm}
+              placeholder="여행의 제목을 입력하세요."
               onSubmit={handleFormSubmitAsync}
               onClose={closeModal}
             />
