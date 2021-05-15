@@ -2,19 +2,18 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
 
 import fetchData from "../utils/fetchData";
-// TODO: delete this
-import MOCK from "../constants/mock";
 import { initFavoriteCourses } from "./favoriteCoursesSlice";
 import { initFavoriteSites } from "./favoriteSitesSlice";
 import { initMyCourses } from "./myCoursesSlice";
 
 export const loginUser = createAsyncThunk(
   "user/loginUserStatus",
-  async (user, { dispatch }) => {
-    await SecureStore.deleteItemAsync("token");
-    const { token, user: userByFetch } = await fetchData("POST", "/auth/login", user);
+  async ({ user, token }, { dispatch }) => {
+    const { token: tokenByFetch, user: userByFetch } = token
+      ? await fetchData("GET", "/auth/user")
+      : await fetchData("POST", "/auth/login", user);
 
-    await SecureStore.setItemAsync("token", token);
+    await SecureStore.setItemAsync("token", tokenByFetch);
 
     const { favoriteCourses, favoriteSites, myCourses } = userByFetch;
 
@@ -27,8 +26,7 @@ export const loginUser = createAsyncThunk(
 );
 
 const initialState = {
-  value: MOCK.user,
-  // value: null,
+  value: null,
   error: null,
   status: "idle",
 };
