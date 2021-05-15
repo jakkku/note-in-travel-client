@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
 
 import Schedule from "./Schedule";
 
-import { toggleSite } from "../reducers/favoriteSitesSlice";
 import swapSchedule from "../utils/swapSchedule";
 
 function ScheduleList({ schedules, onChange, style }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const dispatch = useDispatch();
 
   function handleIndexPress(scheduleIndex) {
     if (!onChange) return;
@@ -26,10 +23,6 @@ function ScheduleList({ schedules, onChange, style }) {
     setSelectedIndex(null);
   }
 
-  function handleLikePress(site) {
-    dispatch(toggleSite(site));
-  }
-
   return (
     <ScrollView style={[styles.container, style]}>
       {schedules.map((schedule) => (
@@ -37,7 +30,6 @@ function ScheduleList({ schedules, onChange, style }) {
           key={schedule.site.fullName}
           schedule={schedule}
           onIndexPress={handleIndexPress}
-          onLikePress={handleLikePress}
           accent={selectedIndex && selectedIndex === schedule.index}
         />
       ))}

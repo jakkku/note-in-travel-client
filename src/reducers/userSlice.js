@@ -4,21 +4,31 @@ import * as SecureStore from "expo-secure-store";
 import fetchData from "../utils/fetchData";
 // TODO: delete this
 import MOCK from "../constants/mock";
+import { initFavoriteCourses } from "./favoriteCoursesSlice";
+import { initFavoriteSites } from "./favoriteSitesSlice";
+import { initMyCourses } from "./myCoursesSlice";
 
 export const loginUser = createAsyncThunk(
   "user/loginUserStatus",
-  async (user) => {
+  async (user, { dispatch }) => {
     await SecureStore.deleteItemAsync("token");
-    const response = await fetchData("POST", "/auth/login", user);
+    const { token, user: userByFetch } = await fetchData("POST", "/auth/login", user);
 
-    await SecureStore.setItemAsync("token", response.token);
+    await SecureStore.setItemAsync("token", token);
 
-    return response.user;
+    const { favoriteCourses, favoriteSites, myCourses } = userByFetch;
+
+    dispatch(initFavoriteCourses(favoriteCourses));
+    dispatch(initFavoriteSites(favoriteSites));
+    dispatch(initMyCourses(myCourses));
+
+    return userByFetch;
   },
 );
 
 const initialState = {
   value: MOCK.user,
+  // value: null,
   error: null,
   status: "idle",
 };

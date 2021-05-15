@@ -1,7 +1,7 @@
 import calculateViewport from "./calcutateViewport";
 
 function calculateRegion(regions, viewPadding = 1.5) {
-  const result = {
+  let result = {
     latitude: 0,
     longitude: 0,
     latitudeDelta: 0,
@@ -11,20 +11,10 @@ function calculateRegion(regions, viewPadding = 1.5) {
   let southwest = { latitude: 0, longitude: 0 };
 
   regions.forEach((region, index) => {
-    const {
-      latitude,
-      longitude,
-      latitudeDelta,
-      longitudeDelta,
-    } = region;
-
-    result.latitude += latitude;
-    result.longitude += longitude;
+    const { latitude, longitude } = region;
 
     if (index === 0) {
-      result.latitudeDelta = latitudeDelta;
-      result.longitudeDelta = longitudeDelta;
-
+      result = { ...region };
       northeast = { latitude, longitude };
       southwest = { latitude, longitude };
       return;
@@ -38,16 +28,16 @@ function calculateRegion(regions, viewPadding = 1.5) {
 
   const { latitudeDelta, longitudeDelta } = calculateViewport(northeast, southwest);
 
-  if (latitudeDelta !== 0) {
+  if (latitudeDelta > 0) {
     result.latitudeDelta = latitudeDelta;
   }
 
-  if (longitudeDelta !== 0) {
+  if (longitudeDelta > 0) {
     result.longitudeDelta = longitudeDelta;
   }
 
-  result.latitude /= regions.length;
-  result.longitude /= regions.length;
+  result.latitude = (northeast.latitude + southwest.latitude) / 2;
+  result.longitude = (northeast.longitude + southwest.longitude) / 2;
   result.latitudeDelta *= viewPadding;
   result.longitudeDelta *= viewPadding;
 

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 
-function useMyLocation(isActive, options = { accuracy: Location.Accuracy.Highest, distanceInterval: 5, timeInterval: 100 }) {
+import MAP from "../constants/map";
+
+function useMyLocation(isActive, options = MAP.location.watchOptions) {
   const [myLocation, setMyLocation] = useState(null);
 
   useEffect(() => {

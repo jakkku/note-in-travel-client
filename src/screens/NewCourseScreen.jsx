@@ -12,20 +12,24 @@ import VectorIcon from "../components/shared/VectorIcon";
 import SafeArea from "../components/shared/SafeArea";
 import GoogleMap from "../components/shared/GoogleMap";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
+import ModalWithBackground from "../components/shared/ModalWithBackground";
+import Form from "../components/Form";
 import ScheduleList from "../components/ScheduleList";
 
 import REGION from "../constants/region";
 import THEME from "../constants/theme";
+import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
 
 function NewCourseScreen({ navigation }) {
-  const isLoading = useSelector((state) => state.myCourses.status);
+  const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
-  const { region, changeRegion } = useRegion(REGION.korea);
   const [schedules, setSchedules] = useState([]);
+  const { region, changeRegion } = useRegion(REGION.korea);
+  const { isModalOpen, openModal, closeModal } = useModal(false);
 
   function handleSearchPress(
     data,
@@ -59,13 +63,20 @@ function NewCourseScreen({ navigation }) {
     changeRegion(newSchedules.map((schedule) => schedule.site.region));
   }
 
-  async function handleSavePressAsync() {
-    if (isLoading === "pending" || schedules.length === 0) return;
+  function handleSavePress() {
+    if (schedules.length === 0) return;
+
+    openModal();
+  }
+
+  async function handleFormSubmitAsync(courseName) {
+    if (isLoading || schedules.length === 0) return;
 
     try {
-      const actionResult = await dispatch(saveMyCourse(schedules));
+      const actionResult = await dispatch(saveMyCourse({ name: courseName, schedules }));
       const myCourse = unwrapResult(actionResult);
 
+      closeModal();
       navigation.navigate("CourseDetail", { id: myCourse._id });
     } catch (err) {
       // TODO: add error handling
@@ -73,36 +84,44 @@ function NewCourseScreen({ navigation }) {
     }
   }
 
-  if (isLoading === "pending") {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.container}>
-      <GoogleMap
-        style={styles.map}
-        region={region}
-        schedules={schedules}
-      />
-      <GoogleSearchBar onPress={handleSearchPress} />
-      <ScheduleList
-        schedules={schedules}
-        onChange={setSchedules}
-      />
-      <BoxButton
-        text="SAVE"
-        onPress={handleSavePressAsync}
-      >
-        <VectorIcon
-          name="plus-circle"
-          color={THEME.color.accent}
-        />
-      </BoxButton>
-      <SafeArea />
+    <View style={[styles.container, isLoading && styles.loading]}>
+      {isLoading
+        ? <ActivityIndicator size="large" />
+        : (
+          <>
+            <GoogleMap
+              style={styles.map}
+              region={region}
+              schedules={schedules}
+            />
+            <GoogleSearchBar onPress={handleSearchPress} />
+            <ScheduleList
+              schedules={schedules}
+              onChange={setSchedules}
+            />
+            <BoxButton
+              text="SAVE"
+              onPress={handleSavePress}
+            >
+              <VectorIcon
+                name="plus-circle"
+                color={THEME.color.accent}
+              />
+            </BoxButton>
+            <SafeArea />
+            <ModalWithBackground
+              isOpen={isModalOpen}
+              onClose={closeModal}
+            >
+              <Form
+                style={styles.modalForm}
+                onSubmit={handleFormSubmitAsync}
+                onClose={closeModal}
+              />
+            </ModalWithBackground>
+          </>
+        )}
     </View>
   );
 }
@@ -113,6 +132,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
+  },
+  loading: {
+    justifyContent: "center",
   },
   map: {
     height: "40%",
