@@ -1,8 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// TODO: delete this
-const mock = [];
-
 const initialState = {
   items: [],
   error: null,
