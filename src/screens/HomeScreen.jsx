@@ -5,7 +5,9 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 import Profile from "../components/shared/Profile";
 import REGION from "../constants/region";
-import BoxButton from "../components/shared/BoxButton";
+import IconButton from "../components/shared/IconButton";
+
+import THEME from "../constants/theme";
 
 function HomeScreen({ navigation }) {
   const { name, photoUrl } = useSelector((state) => state.user.value);
@@ -27,8 +29,11 @@ function HomeScreen({ navigation }) {
         name={name}
         photoUrl={photoUrl}
       />
-      <BoxButton
-        text="Create New Course"
+      <IconButton
+        style={styles.button}
+        name="plus-circle"
+        color={THEME.color.accent}
+        size={40}
         onPress={handlePress}
       />
     </View>
@@ -39,11 +44,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
   },
   maps: {
     width: "100%",
     height: "70%",
     borderRadius: 20,
+  },
+  button: {
+    height: "10%",
   },
 });
 

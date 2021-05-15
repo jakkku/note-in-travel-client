@@ -7,8 +7,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import BoxButton from "../components/shared/BoxButton";
-import VectorIcon from "../components/shared/VectorIcon";
 import SafeArea from "../components/shared/SafeArea";
 import GoogleMap from "../components/shared/GoogleMap";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
@@ -22,11 +20,15 @@ import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
+import IconButton from "../components/shared/IconButton";
+import useErrorMessage from "../hooks/useErrorMsg";
+import Title from "../components/shared/Title";
 
 function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
+  const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const [schedules, setSchedules] = useState([]);
   const { region, changeRegion } = useRegion(REGION.korea);
   const { isModalOpen, openModal, closeModal } = useModal(false);
@@ -76,52 +78,47 @@ function NewCourseScreen({ navigation }) {
       const actionResult = await dispatch(saveMyCourse({ name: courseName, schedules }));
       const myCourse = unwrapResult(actionResult);
 
-      closeModal();
       navigation.navigate("CourseDetail", { id: myCourse._id });
+      closeModal();
     } catch (err) {
-      // TODO: add error handling
-      console.log(err.message);
+      setErrorMsg(err.message);
     }
   }
 
   return (
     <View style={[styles.container, isLoading && styles.loading]}>
-      {isLoading
-        ? <ActivityIndicator size="large" />
-        : (
-          <>
-            <GoogleMap
-              style={styles.map}
-              region={region}
-              schedules={schedules}
-            />
-            <GoogleSearchBar onPress={handleSearchPress} />
-            <ScheduleList
-              schedules={schedules}
-              onChange={setSchedules}
-            />
-            <BoxButton
-              text="SAVE"
-              onPress={handleSavePress}
-            >
-              <VectorIcon
-                name="plus-circle"
-                color={THEME.color.accent}
-              />
-            </BoxButton>
-            <SafeArea />
-            <ModalWithBackground
-              isOpen={isModalOpen}
+      <GoogleMap
+        style={styles.map}
+        region={region}
+        schedules={schedules}
+      />
+      <GoogleSearchBar onPress={handleSearchPress} />
+      <ScheduleList
+        schedules={schedules}
+        onChange={setSchedules}
+      />
+      <IconButton
+        name="save"
+        color={THEME.color.primitive}
+        size={40}
+        onPress={handleSavePress}
+      />
+      <SafeArea />
+      <ModalWithBackground
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      >
+        {errorMsg && !isLoading && <Title text={errorMsg} />}
+        {isLoading
+          ? <ActivityIndicator size="large" />
+          : (
+            <Form
+              style={styles.modalForm}
+              onSubmit={handleFormSubmitAsync}
               onClose={closeModal}
-            >
-              <Form
-                style={styles.modalForm}
-                onSubmit={handleFormSubmitAsync}
-                onClose={closeModal}
-              />
-            </ModalWithBackground>
-          </>
-        )}
+            />
+          )}
+      </ModalWithBackground>
     </View>
   );
 }

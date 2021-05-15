@@ -3,9 +3,11 @@ import { TouchableOpacity } from "react-native";
 
 import VectorIcon from "./VectorIcon";
 
-function TabButton({
-  name,
+function IconButton({
   type,
+  name,
+  color,
+  size,
   onPress,
   style,
 }) {
@@ -14,9 +16,14 @@ function TabButton({
       style={style}
       onPress={onPress}
     >
-      <VectorIcon type={type} name={name} />
+      <VectorIcon
+        type={type}
+        name={name}
+        size={size}
+        color={color}
+      />
     </TouchableOpacity>
   );
 }
 
-export default TabButton;
+export default IconButton;
