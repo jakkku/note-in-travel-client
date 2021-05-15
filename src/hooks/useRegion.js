@@ -4,16 +4,19 @@ import calculateRegion from "../utils/calculateRegion";
 
 function useRegion(regions = {}) {
   const [region, setRegion] = useState(() => {
-    let initialRegion = regions;
-
-    if (initialRegion.length > 0) {
-      initialRegion = calculateRegion(initialRegion);
+    if (!Array.isArray(regions)) {
+      return regions;
     }
 
-    return initialRegion;
+    return calculateRegion(regions);
   });
 
   function changeRegion(sites) {
+    if (!Array.isArray(sites)) {
+      setRegion(sites);
+      return;
+    }
+
     setRegion(calculateRegion(sites));
   }
 
