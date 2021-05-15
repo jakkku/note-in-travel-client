@@ -3,15 +3,17 @@ import {
   View,
   TextInput,
   StyleSheet,
-  TouchableOpacity,
 } from "react-native";
 import THEME from "../constants/theme";
 
-import BoxButton from "./shared/BoxButton";
-import Title from "./shared/Title";
-import VectorIcon from "./shared/VectorIcon";
+import IconButton from "./shared/IconButton";
 
-function Form({ onSubmit, onClose, style }) {
+function TextInputForm({
+  placeholder,
+  onSubmit,
+  onClose,
+  style,
+}) {
   const [text, setText] = useState("");
 
   function handlePress() {
@@ -22,27 +24,28 @@ function Form({ onSubmit, onClose, style }) {
 
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.close}>
-        <TouchableOpacity onPress={onClose}>
-          <VectorIcon
-            type="FontAwesome"
-            name="close"
-            color={THEME.color.accent}
-          />
-        </TouchableOpacity>
-      </View>
-      <Title text="✈️여행의 제목" />
       <TextInput
         style={styles.textInput}
-        placeholder="여행의 제목을 입력하세요."
+        placeholder={placeholder}
         placeholderTextColor="gray"
         maxLength={10}
         onChangeText={setText}
       />
-      <BoxButton
-        text="저장"
-        onPress={handlePress}
-      />
+      <View style={styles.buttonContainer}>
+        <IconButton
+          name="save"
+          color={THEME.color.primitive}
+          size={30}
+          onPress={handlePress}
+        />
+        <IconButton
+          type="FontAwesome"
+          name="close"
+          size={30}
+          color={THEME.color.accent}
+          onPress={onClose}
+        />
+      </View>
     </View>
   );
 }
@@ -63,10 +66,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     textAlign: "center",
   },
-  close: {
-    alignItems: "flex-end",
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingTop: "5%",
     width: 160,
   },
 });
 
-export default Form;
+export default TextInputForm;

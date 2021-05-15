@@ -10,8 +10,8 @@ function calculateViewport(northeast, southwest) {
   const minLat = southwest.lat ?? southwest.latitude;
   const minLng = southwest.lng ?? southwest.longitude;
 
-  const latitudeDelta = maxLat - minLat;
-  const longitudeDelta = maxLng - minLng;
+  const latitudeDelta = Math.abs(maxLat - minLat);
+  const longitudeDelta = Math.abs(maxLng - minLng);
 
   return {
     latitudeDelta,

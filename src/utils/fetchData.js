@@ -11,8 +11,9 @@ import generateHeader from "./generateHeader";
  */
 async function fetchData(method, url, data) {
   try {
+    const serverUrl = API_SERVER_URL + url;
     const headers = await generateHeader();
-    let response = await fetch(`${API_SERVER_URL}${url}`, {
+    let response = await fetch(serverUrl, {
       method,
       headers,
       credentials: "include",

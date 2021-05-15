@@ -4,6 +4,7 @@ import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 function VectorIcon({
   type = "FontAwesome5",
   name,
+  size = 25,
   color = "white",
 }) {
   return (
@@ -11,14 +12,14 @@ function VectorIcon({
       {type === "FontAwesome5" && (
         <FontAwesome5
           name={name}
-          size={25}
+          size={size}
           color={color}
         />
       )}
       {type === "FontAwesome" && (
         <FontAwesome
           name={name}
-          size={25}
+          size={size}
           color={color}
         />
       )}

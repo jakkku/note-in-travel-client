@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import LikeButton from "./shared/LikeButton";
 import Title from "./shared/Title";
+import IconButton from "./shared/IconButton";
 
 import THEME from "../constants/theme";
 import { toggleSite, selectFavoriteSiteBySiteFullName } from "../reducers/favoriteSitesSlice";
@@ -40,8 +40,10 @@ function Schedule({
         <Title text={site.shortName} />
         <Text>{site.fullName}</Text>
       </View>
-      <LikeButton
-        isClicked={isFavorite}
+      <IconButton
+        type="FontAwesome"
+        name={isFavorite ? "heart" : "heart-o"}
+        color={THEME.color.accent}
         onPress={handleLikePress}
       />
     </View>

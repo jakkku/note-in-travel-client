@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
+import * as SecureStore from "expo-secure-store";
 
 import { loginUser } from "../reducers/userSlice";
 import loginWithGoogleAsync from "../utils/loginWithGoogleAsync";
@@ -14,12 +15,23 @@ function WelcomeScreen() {
   const isLoading = useSelector((state) => state.user.status === "pending");
   const dispath = useDispatch();
 
+  useEffect(() => {
+    (async function () {
+      const token = await SecureStore.getItemAsync("token");
+
+      if (!token) return;
+
+      dispath(loginUser({ token }));
+    })();
+  }, []);
+
   async function handleClick() {
     const result = await loginWithGoogleAsync();
 
     if (!result.user) return;
 
-    dispath(loginUser(result.user));
+    await SecureStore.deleteItemAsync("token");
+    dispath(loginUser({ user: result.user }));
   }
 
   return (

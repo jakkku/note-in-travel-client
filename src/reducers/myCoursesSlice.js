@@ -1,9 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import fetchData from "../utils/fetchData";
 
-// TODO: delete this
-import MOCK from "../constants/mock";
-
 export const saveMyCourse = createAsyncThunk(
   "myCourses/saveMyCourseStatus",
   async (course) => {
@@ -14,8 +11,7 @@ export const saveMyCourse = createAsyncThunk(
 );
 
 const initialState = {
-  items: MOCK.myCourse,
-  // items: [],
+  items: [],
   error: null,
   status: "idle",
 };

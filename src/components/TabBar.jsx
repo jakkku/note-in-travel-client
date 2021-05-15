@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import TabButton from "./shared/TabButton";
+import IconButton from "./shared/IconButton";
 import THEME from "../constants/theme";
 import { selectMode, toggleMode } from "../reducers/modeSlice";
 
@@ -19,17 +19,17 @@ function TabBar({ navigation, state }) {
 
   return (
     <View style={styles.container}>
-      <TabButton
+      <IconButton
         name="home"
         onPress={() => nav.navigate("Home")}
       />
-      <TabButton
+      <IconButton
         name="user-alt"
         onPress={() => nav.navigate("User")}
       />
       {curRouteName === "CourseDetail" && (
         <View style={styles.activeButtonContainer}>
-          <TabButton
+          <IconButton
             style={styles.activeButton}
             name={curMode === "idle" ? "plane-departure" : "paper-plane"}
             onPress={handleActivePress}

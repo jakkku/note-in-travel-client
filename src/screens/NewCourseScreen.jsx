@@ -7,19 +7,20 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import BoxButton from "../components/shared/BoxButton";
-import VectorIcon from "../components/shared/VectorIcon";
+import Title from "../components/shared/Title";
 import SafeArea from "../components/shared/SafeArea";
 import GoogleMap from "../components/shared/GoogleMap";
+import IconButton from "../components/shared/IconButton";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
 import ModalWithBackground from "../components/shared/ModalWithBackground";
-import Form from "../components/Form";
 import ScheduleList from "../components/ScheduleList";
+import TextInputForm from "../components/TextInputForm";
 
-import REGION from "../constants/region";
 import THEME from "../constants/theme";
+import REGION from "../constants/region";
 import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
+import useErrorMessage from "../hooks/useErrorMsg";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
 
@@ -27,6 +28,7 @@ function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
+  const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const [schedules, setSchedules] = useState([]);
   const { region, changeRegion } = useRegion(REGION.korea);
   const { isModalOpen, openModal, closeModal } = useModal(false);
@@ -76,52 +78,48 @@ function NewCourseScreen({ navigation }) {
       const actionResult = await dispatch(saveMyCourse({ name: courseName, schedules }));
       const myCourse = unwrapResult(actionResult);
 
-      closeModal();
       navigation.navigate("CourseDetail", { id: myCourse._id });
+      closeModal();
     } catch (err) {
-      // TODO: add error handling
-      console.log(err.message);
+      setErrorMsg(err.message);
     }
   }
 
   return (
     <View style={[styles.container, isLoading && styles.loading]}>
-      {isLoading
-        ? <ActivityIndicator size="large" />
-        : (
-          <>
-            <GoogleMap
-              style={styles.map}
-              region={region}
-              schedules={schedules}
-            />
-            <GoogleSearchBar onPress={handleSearchPress} />
-            <ScheduleList
-              schedules={schedules}
-              onChange={setSchedules}
-            />
-            <BoxButton
-              text="SAVE"
-              onPress={handleSavePress}
-            >
-              <VectorIcon
-                name="plus-circle"
-                color={THEME.color.accent}
-              />
-            </BoxButton>
-            <SafeArea />
-            <ModalWithBackground
-              isOpen={isModalOpen}
+      <GoogleMap
+        style={styles.map}
+        region={region}
+        schedules={schedules}
+      />
+      <GoogleSearchBar onPress={handleSearchPress} />
+      <ScheduleList
+        schedules={schedules}
+        onChange={setSchedules}
+      />
+      <IconButton
+        name="save"
+        color={THEME.color.primitive}
+        size={40}
+        onPress={handleSavePress}
+      />
+      <SafeArea />
+      <ModalWithBackground
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      >
+        {errorMsg && !isLoading && <Title text={errorMsg} />}
+        {isLoading
+          ? <ActivityIndicator size="large" />
+          : (
+            <TextInputForm
+              style={styles.modalForm}
+              placeholder="여행의 제목을 입력하세요."
+              onSubmit={handleFormSubmitAsync}
               onClose={closeModal}
-            >
-              <Form
-                style={styles.modalForm}
-                onSubmit={handleFormSubmitAsync}
-                onClose={closeModal}
-              />
-            </ModalWithBackground>
-          </>
-        )}
+            />
+          )}
+      </ModalWithBackground>
     </View>
   );
 }
