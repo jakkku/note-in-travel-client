@@ -5,7 +5,6 @@ import userReducer from "../reducers/userSlice";
 import myCoursesReducer from "../reducers/myCoursesSlice";
 import favoriteCoursesReducer from "../reducers/favoriteCoursesSlice";
 import favoriteSitesReducer from "../reducers/favoriteSitesSlice";
-import modeReducer from "../reducers/modeSlice";
 
 export default configureStore({
   reducer: {
@@ -13,7 +12,6 @@ export default configureStore({
     myCourses: myCoursesReducer,
     favoriteCourses: favoriteCoursesReducer,
     favoriteSites: favoriteSitesReducer,
-    mode: modeReducer,
   },
   middleware: (getDefaultMiddleware) => {
     if (process.env.NODE_ENV !== "production") {

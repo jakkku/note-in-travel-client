@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import {
   View,
   StyleSheet,
@@ -8,27 +7,32 @@ import {
 
 import Title from "../components/shared/Title";
 import GoogleMap from "../components/shared/GoogleMap";
+import ModalWithBackground from "../components/shared/ModalWithBackground";
 import ScheduleList from "../components/ScheduleList";
+import TextInputForm from "../components/TextInputForm";
 
 import fetchData from "../utils/fetchData";
 import useRegion from "../hooks/useRegion";
 import useMyLocation from "../hooks/useMyLocation";
 import useErrorMessage from "../hooks/useErrorMsg";
-import { selectMode } from "../reducers/modeSlice";
 
-function CourseDetailScreen({ route }) {
-  const curMode = useSelector(selectMode);
-
+function CourseDetailScreen({
+  route,
+  isActiveMode,
+  isMessageFormOpen,
+  onMessageFormClose,
+  onMessageSubmit,
+}) {
   const [isLoading, setIsLoading] = useState(true);
-  const [course, setCourse] = useState(null);
+  const [course, setCourse] = useState({});
   const { region, changeRegion } = useRegion({});
-  const myLocation = useMyLocation(curMode === "active");
+  const myLocation = useMyLocation(isActiveMode);
   const { errorMsg, setErrorMsg } = useErrorMessage(null);
 
   const { id } = route.params;
 
   useEffect(() => {
-    let isCancel = false;
+    let isCancelled = false;
 
     setIsLoading(true);
     (async function fetchCourseById(courseId) {
@@ -36,7 +40,7 @@ function CourseDetailScreen({ route }) {
         const response = await fetchData("GET", `/course/${courseId}`);
         const sites = response.schedules.map((schedule) => schedule.site.region);
 
-        if (isCancel) return;
+        if (isCancelled) return;
 
         setCourse(response);
         changeRegion(sites);
@@ -47,9 +51,21 @@ function CourseDetailScreen({ route }) {
     })(id);
 
     return () => {
-      isCancel = true;
+      isCancelled = true;
     };
   }, [id]);
+
+  async function handleMessageSubmitAsync(content) {
+    try {
+      const message = { content, location: myLocation };
+      const response = await fetchData("POST", `/course/${id}`, message);
+
+      course.messages.push(response);
+      onMessageSubmit();
+    } catch (err) {
+      setErrorMsg(err.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -66,6 +82,13 @@ function CourseDetailScreen({ route }) {
             />
             <Title text={`${course.creator.name}의 ${course.name}`} />
             <ScheduleList schedules={course.schedules} />
+            <ModalWithBackground isOpen={isMessageFormOpen}>
+              <TextInputForm
+                placeholder="쪽지 내용을 입력하세요."
+                onSubmit={handleMessageSubmitAsync}
+                onClose={onMessageFormClose}
+              />
+            </ModalWithBackground>
           </>
         )}
     </View>
@@ -84,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CourseDetailScreen;
+export default React.memo(CourseDetailScreen);

@@ -9,12 +9,14 @@ function IconButton({
   color,
   size,
   onPress,
+  onLongPress,
   style,
 }) {
   return (
     <TouchableOpacity
       style={style}
       onPress={onPress}
+      onLongPress={onLongPress}
     >
       <VectorIcon
         type={type}
