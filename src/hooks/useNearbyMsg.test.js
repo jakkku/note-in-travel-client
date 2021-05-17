@@ -4,6 +4,7 @@ import { create, act } from "react-test-renderer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
+// TODO: solve error
 import UserScreen from "../screens/UserScreen";
 import useNearbyMsg from "./useNearbyMsg";
 
