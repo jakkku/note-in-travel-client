@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 import generateSpatialHashGrid from "../utils/generateSpatialHashGrid";
 
@@ -17,7 +18,7 @@ function useNearbyMsg(region, messages, myLocation) {
     [spatialHashGrid, myIndices.x, myIndices.y],
   );
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!spatialHashGrid || !myLocation) return;
 
     const { latitude: myLat, longitude: myLng } = myLocation;
@@ -27,7 +28,7 @@ function useNearbyMsg(region, messages, myLocation) {
 
     setMyIndices(newMyIndices);
     return () => setMyIndices({});
-  }, [spatialHashGrid, myLocation]);
+  }, [spatialHashGrid, myLocation]));
 
   return { nearbyMessages, myIndices };
 }

@@ -12,7 +12,6 @@ import generateHeader from "./generateHeader";
 async function fetchData(method, url, data) {
   try {
     const serverUrl = API_SERVER_URL + url;
-    console.log(serverUrl);
     const headers = await generateHeader();
     let response = await fetch(serverUrl, {
       method,
@@ -22,7 +21,6 @@ async function fetchData(method, url, data) {
     });
 
     response = await response.json();
-
     if (response.ok) {
       return response.data;
     }

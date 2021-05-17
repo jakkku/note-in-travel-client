@@ -12,11 +12,8 @@ function CoursePreviewList({
 }) {
   return (
     <View style={[styles.container, style]}>
-      <Title text={title} />
-      <ScrollView
-        style={styles.scrollView}
-        horizontal
-      >
+      {title && <Title style={styles.title} text={title} />}
+      <ScrollView horizontal>
         {courses.map((course) => (
           <CoursePreview
             key={course._id}
@@ -34,8 +31,8 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "30%",
   },
-  scrollView: {
-    paddingVertical: "5%",
+  title: {
+    marginBottom: "5%",
   },
 });
 

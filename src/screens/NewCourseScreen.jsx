@@ -28,8 +28,8 @@ function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
-  const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const [schedules, setSchedules] = useState([]);
+  const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const { region, changeRegion } = useRegion(REGION.korea);
   const { isModalOpen, openModal, closeModal } = useModal(false);
 

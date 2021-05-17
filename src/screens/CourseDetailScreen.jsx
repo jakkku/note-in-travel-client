@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import Title from "../components/shared/Title";
 import GoogleMap from "../components/shared/GoogleMap";
@@ -32,10 +33,9 @@ function CourseDetailScreen({
   const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const { id } = route.params;
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     let isCancelled = false;
 
-    setIsLoading(true);
     (async function fetchCourseById(courseId) {
       try {
         const response = await fetchData("GET", `/course/${courseId}`);
@@ -53,8 +53,9 @@ function CourseDetailScreen({
 
     return () => {
       isCancelled = true;
+      setIsLoading(true);
     };
-  }, [id]);
+  }, [id]));
 
   async function handleMessageSubmitAsync(content) {
     try {
