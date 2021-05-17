@@ -15,7 +15,7 @@ import TextInputForm from "../components/TextInputForm";
 import fetchData from "../utils/fetchData";
 import useRegion from "../hooks/useRegion";
 import useMyLocation from "../hooks/useMyLocation";
-import useErrorMessage from "../hooks/useErrorMsg";
+import useErrorMsg from "../hooks/useErrorMsg";
 import useNearbyMsg from "../hooks/useNearbyMsg";
 
 function CourseDetailScreen({
@@ -30,7 +30,7 @@ function CourseDetailScreen({
   const { region, changeRegion } = useRegion({});
   const myLocation = useMyLocation(isActiveMode);
   const { nearbyMessages, myIndices } = useNearbyMsg(region, course.messages, myLocation);
-  const { errorMsg, setErrorMsg } = useErrorMessage(null);
+  const { errorMsg, setErrorMsg } = useErrorMsg(null);
   const { id } = route.params;
 
   useFocusEffect(useCallback(() => {
