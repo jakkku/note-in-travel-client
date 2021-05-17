@@ -1,21 +1,19 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 
 import IconButton from "./shared/IconButton";
+
 import THEME from "../constants/theme";
-import { selectMode, toggleMode } from "../reducers/modeSlice";
 
-function TabBar({ navigation, state }) {
-  const curMode = useSelector(selectMode);
-  const dispatch = useDispatch();
-
+function TabBar({
+  navigation,
+  state,
+  isActiveMode,
+  onActiveButtonPress,
+  onActiveButtonLongPress,
+}) {
   const nav = navigation;
   const curRouteName = state.routeNames[state.index];
-
-  function handleActivePress() {
-    dispatch(toggleMode());
-  }
 
   return (
     <View style={styles.container}>
@@ -31,8 +29,9 @@ function TabBar({ navigation, state }) {
         <View style={styles.activeButtonContainer}>
           <IconButton
             style={styles.activeButton}
-            name={curMode === "idle" ? "plane-departure" : "paper-plane"}
-            onPress={handleActivePress}
+            name={isActiveMode ? "paper-plane" : "plane-departure"}
+            onPress={isActiveMode ? onActiveButtonPress : null}
+            onLongPress={onActiveButtonLongPress}
           />
         </View>
       )}
