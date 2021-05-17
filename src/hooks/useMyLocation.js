@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import * as Location from "expo-location";
+import { useFocusEffect } from "@react-navigation/native";
 
 import MAP from "../constants/map";
 
 function useMyLocation(isActive, options = MAP.location.watchOptions) {
   const [myLocation, setMyLocation] = useState(null);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!isActive) return;
 
     let watchId;
@@ -30,7 +31,7 @@ function useMyLocation(isActive, options = MAP.location.watchOptions) {
       watchId.remove();
       setMyLocation(null);
     };
-  }, [isActive]);
+  }, [isActive, options]));
 
   return myLocation;
 }

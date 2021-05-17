@@ -21,3 +21,5 @@ const favoriteCoursesSlice = createSlice({
 export const { initFavoriteCourses } = favoriteCoursesSlice.actions;
 
 export default favoriteCoursesSlice.reducer;
+
+export const selectFavoriteCourses = (state) => state.favoriteCourses.items;

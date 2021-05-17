@@ -55,5 +55,18 @@ describe(">>> UTILS --- GENERATE SPATIAL HASH GIRD", () => {
     const { x, y } = spatialHashGrid.getIndices(items[0].location);
 
     expect(spatialHashGrid.getByIndices(x, y)[0]).toBe(items[0]);
+    expect(spatialHashGrid.getByIndices(-1, -1)).toBe(undefined);
+    expect(spatialHashGrid.getByIndices(11, 11)).toBe(undefined);
+  });
+
+  it("+++ METHOD --- return array including target indices and nearby items", () => {
+    const spatialHashGrid = generateSpatialHashGrid(region, items);
+    const { x, y } = spatialHashGrid.getIndices(items[0].location);
+    const target = spatialHashGrid.getByIndices(x, y);
+    const nearby = spatialHashGrid.getByIndices(x + 1, y);
+    const composedItems = target.concat(...nearby);
+
+    expect(Array.isArray(spatialHashGrid.getWithNearbyByIndices(x, y))).toBe(true);
+    expect(spatialHashGrid.getWithNearbyByIndices(x, y).length).toBe(composedItems.length);
   });
 });

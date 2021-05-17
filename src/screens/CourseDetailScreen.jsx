@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import Title from "../components/shared/Title";
 import GoogleMap from "../components/shared/GoogleMap";
@@ -15,6 +16,7 @@ import fetchData from "../utils/fetchData";
 import useRegion from "../hooks/useRegion";
 import useMyLocation from "../hooks/useMyLocation";
 import useErrorMessage from "../hooks/useErrorMsg";
+import useNearbyMsg from "../hooks/useNearbyMsg";
 
 function CourseDetailScreen({
   route,
@@ -27,14 +29,13 @@ function CourseDetailScreen({
   const [course, setCourse] = useState({});
   const { region, changeRegion } = useRegion({});
   const myLocation = useMyLocation(isActiveMode);
+  const { nearbyMessages, myIndices } = useNearbyMsg(region, course.messages, myLocation);
   const { errorMsg, setErrorMsg } = useErrorMessage(null);
-
   const { id } = route.params;
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     let isCancelled = false;
 
-    setIsLoading(true);
     (async function fetchCourseById(courseId) {
       try {
         const response = await fetchData("GET", `/course/${courseId}`);
@@ -52,15 +53,24 @@ function CourseDetailScreen({
 
     return () => {
       isCancelled = true;
+      setIsLoading(true);
     };
-  }, [id]);
+  }, [id]));
 
   async function handleMessageSubmitAsync(content) {
     try {
+      if (!myIndices) {
+        setErrorMsg("코스 영역 밖에 있습니다.");
+        return;
+      }
+
       const message = { content, location: myLocation };
       const response = await fetchData("POST", `/course/${id}`, message);
 
-      course.messages.push(response);
+      setCourse((prev) => ({
+        ...prev,
+        messages: prev.messages.concat(response),
+      }));
       onMessageSubmit();
     } catch (err) {
       setErrorMsg(err.message);
@@ -68,8 +78,7 @@ function CourseDetailScreen({
   }
 
   return (
-    <View style={styles.container}>
-      {errorMsg && <Title text={errorMsg} />}
+    <View style={[styles.container, isLoading && styles.loading]}>
       {isLoading
         ? <ActivityIndicator size="large" />
         : (
@@ -78,11 +87,14 @@ function CourseDetailScreen({
               region={region}
               schedules={course.schedules}
               myLocation={myLocation}
+              messages={nearbyMessages}
               style={styles.map}
             />
+            {errorMsg && !isMessageFormOpen && <Title text={errorMsg} />}
             <Title text={`${course.creator.name}의 ${course.name}`} />
             <ScheduleList schedules={course.schedules} />
             <ModalWithBackground isOpen={isMessageFormOpen}>
+              {errorMsg && isMessageFormOpen && <Title text={errorMsg} />}
               <TextInputForm
                 placeholder="쪽지 내용을 입력하세요."
                 onSubmit={handleMessageSubmitAsync}
@@ -99,6 +111,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+  },
+  loading: {
+    justifyContent: "center",
   },
   map: {
     width: "100%",

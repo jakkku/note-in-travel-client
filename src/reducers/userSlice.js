@@ -70,5 +70,4 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const selectUserName = (state) => state.user.value.name;
-export const selectPhotoUrl = (state) => state.user.value.photoUrl;
+export const selectUser = (state) => state.user.value;

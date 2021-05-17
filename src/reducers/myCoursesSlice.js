@@ -53,3 +53,5 @@ const myCoursesSlice = createSlice({
 export const { initMyCourses } = myCoursesSlice.actions;
 
 export default myCoursesSlice.reducer;
+
+export const selectMyCourses = (state) => state.myCourses.items;

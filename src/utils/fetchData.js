@@ -21,7 +21,6 @@ async function fetchData(method, url, data) {
     });
 
     response = await response.json();
-
     if (response.ok) {
       return response.data;
     }

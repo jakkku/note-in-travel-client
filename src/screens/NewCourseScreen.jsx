@@ -28,8 +28,8 @@ function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
   const dispatch = useDispatch();
 
-  const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const [schedules, setSchedules] = useState([]);
+  const { errorMsg, setErrorMsg } = useErrorMessage(null);
   const { region, changeRegion } = useRegion(REGION.korea);
   const { isModalOpen, openModal, closeModal } = useModal(false);
 
@@ -75,7 +75,11 @@ function NewCourseScreen({ navigation }) {
     if (isLoading || schedules.length === 0) return;
 
     try {
-      const actionResult = await dispatch(saveMyCourse({ name: courseName, schedules }));
+      const actionResult = await dispatch(saveMyCourse({
+        name: courseName,
+        region,
+        schedules,
+      }));
       const myCourse = unwrapResult(actionResult);
 
       navigation.navigate("CourseDetail", { id: myCourse._id });

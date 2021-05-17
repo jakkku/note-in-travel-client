@@ -6,10 +6,14 @@ import Profile from "../components/shared/Profile";
 import SafeArea from "../components/shared/SafeArea";
 import CoursePreviewList from "../components/shared/CoursePreviewList";
 
+import { selectUser } from "../reducers/userSlice";
+import { selectMyCourses } from "../reducers/myCoursesSlice";
+import { selectFavoriteCourses } from "../reducers/favoriteCoursesSlice";
+
 function UserScreen({ navigation }) {
-  const { name, photoUrl } = useSelector((state) => state.user.value);
-  const myCourses = useSelector((state) => state.myCourses.items);
-  const favoriteCourses = useSelector((state) => state.favoriteCourses.items);
+  const { name, photoUrl } = useSelector(selectUser);
+  const myCourses = useSelector(selectMyCourses);
+  const favoriteCourses = useSelector(selectFavoriteCourses);
 
   function handlePreviewPress(courseId) {
     navigation.navigate("CourseDetail", { id: courseId });
