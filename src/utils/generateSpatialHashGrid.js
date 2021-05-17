@@ -26,6 +26,10 @@ function generateSpatialHashGrid(region = {}, items = []) {
     const { location } = item;
     const latIndex = Math.floor((location.latitude - latOrigin) / dLat);
     const lngIndex = Math.floor((location.longitude - lngOrigin) / dLng);
+
+    if (latIndex < 0 || latIndex > 9) return;
+    if (lngIndex < 0 || lngIndex > 9) return;
+
     const area = result[lngIndex][latIndex];
 
     result[lngIndex][latIndex] = area ? area.concat(item) : [item];

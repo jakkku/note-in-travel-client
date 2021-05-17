@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -15,7 +15,7 @@ import fetchData from "../utils/fetchData";
 import useRegion from "../hooks/useRegion";
 import useMyLocation from "../hooks/useMyLocation";
 import useErrorMessage from "../hooks/useErrorMsg";
-import generateSpatialHashGrid from "../utils/generateSpatialHashGrid";
+import useNearbyMsg from "../hooks/useNearbyMsg";
 
 function CourseDetailScreen({
   route,
@@ -28,34 +28,8 @@ function CourseDetailScreen({
   const [course, setCourse] = useState({});
   const { region, changeRegion } = useRegion({});
   const myLocation = useMyLocation(isActiveMode);
+  const { nearbyMessages, myIndices } = useNearbyMsg(region, course.messages, myLocation);
   const { errorMsg, setErrorMsg } = useErrorMessage(null);
-
-  const [myIndices, setMyIndices] = useState({});
-  const spatialHashGrid = useMemo(
-    () => generateSpatialHashGrid(region, course.messages),
-    [region, course.messages],
-  );
-
-  useEffect(() => {
-    if (!spatialHashGrid || !myLocation) return;
-
-    const { latitude: myLat, longitude: myLng } = myLocation;
-    const newMyIndices = spatialHashGrid.getIndices(myLat, myLng);
-
-    if (!newMyIndices) return;
-
-    setMyIndices(newMyIndices);
-  }, [spatialHashGrid, myLocation]);
-
-  const nearbyMessages = useMemo(
-    () => {
-      if (!spatialHashGrid) return;
-
-      return spatialHashGrid.getWithNearbyByIndices(myIndices.x, myIndices.y);
-    },
-    [spatialHashGrid, myIndices.x, myIndices.y],
-  );
-
   const { id } = route.params;
 
   useEffect(() => {
@@ -103,7 +77,7 @@ function CourseDetailScreen({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isLoading && styles.loading]}>
       {isLoading
         ? <ActivityIndicator size="large" />
         : (
@@ -115,6 +89,7 @@ function CourseDetailScreen({
               messages={nearbyMessages}
               style={styles.map}
             />
+            {errorMsg && !isMessageFormOpen && <Title text={errorMsg} />}
             <Title text={`${course.creator.name}의 ${course.name}`} />
             <ScheduleList schedules={course.schedules} />
             <ModalWithBackground isOpen={isMessageFormOpen}>
@@ -127,7 +102,6 @@ function CourseDetailScreen({
             </ModalWithBackground>
           </>
         )}
-      {errorMsg && !isMessageFormOpen && <Title text={errorMsg} />}
     </View>
   );
 }
@@ -136,6 +110,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+  },
+  loading: {
+    justifyContent: "center",
   },
   map: {
     width: "100%",

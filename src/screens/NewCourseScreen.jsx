@@ -75,7 +75,7 @@ function NewCourseScreen({ navigation }) {
     if (isLoading || schedules.length === 0) return;
 
     try {
-      const actionResult = await dispatch(saveMyCourse({ name: courseName, schedules }));
+      const actionResult = await dispatch(saveMyCourse({ name: courseName, region, schedules }));
       const myCourse = unwrapResult(actionResult);
 
       navigation.navigate("CourseDetail", { id: myCourse._id });

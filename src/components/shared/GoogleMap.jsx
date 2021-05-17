@@ -3,13 +3,14 @@ import { Image, StyleSheet } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 import IndexMarker from "./IndexMarker";
+import MessageMarker from "./MessageMarker";
 import character from "../../../assets/backpack.png";
 
 function GoogleMap({
   region,
   schedules = [],
   myLocation,
-  messages,
+  messages = [],
   style,
 }) {
   return (
@@ -30,9 +31,10 @@ function GoogleMap({
           index={index}
         />
       ))}
-      {messages.map((message) => (
-        <Marker
+      {myLocation && messages.map((message) => (
+        <MessageMarker
           key={message._id}
+          style={styles.message}
           coordinate={message.location}
           description={message.content}
         />
@@ -45,6 +47,9 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "100%",
+  },
+  message: {
+    zIndex: 1,
   },
 });
 
