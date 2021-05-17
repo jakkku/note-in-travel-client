@@ -23,9 +23,12 @@ function generateSpatialHashGrid(region = {}, items = []) {
   const dLng = longitudeDelta / 10;
 
   items.forEach((item) => {
-    const { location } = item;
-    const latIndex = Math.floor((location.latitude - latOrigin) / dLat);
-    const lngIndex = Math.floor((location.longitude - lngOrigin) / dLng);
+    const { location, region: itemRegion } = item;
+    const lat = location?.latitude ?? itemRegion.latitude;
+    const lng = location?.longitude ?? itemRegion.longitude;
+
+    const latIndex = Math.floor((lat - latOrigin) / dLat);
+    const lngIndex = Math.floor((lng - lngOrigin) / dLng);
 
     if (latIndex < 0 || latIndex > 9) return;
     if (lngIndex < 0 || lngIndex > 9) return;

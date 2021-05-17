@@ -1,29 +1,54 @@
-import React from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { View, StyleSheet } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { useFocusEffect } from "@react-navigation/native";
 
 import Profile from "../components/shared/Profile";
-import REGION from "../constants/region";
+import GoogleMap from "../components/shared/GoogleMap";
 import IconButton from "../components/shared/IconButton";
+import REGION from "../constants/region";
 
 import THEME from "../constants/theme";
+import fetchData from "../utils/fetchData";
+import generateSpatialHashGrid from "../utils/generateSpatialHashGrid";
 
 function HomeScreen({ navigation }) {
   const { name, photoUrl } = useSelector((state) => state.user.value);
+  const [courses, setCourses] = useState([]);
+  const segments = useMemo(() => {
+    if (!courses) return;
+
+    return generateSpatialHashGrid(REGION.korea, courses)
+      .flat()
+      .filter((segment) => segment);
+  }, [courses]);
+
+  useFocusEffect(useCallback(() => {
+    (async function () {
+      const response = await fetchData("GET", "/course");
+
+      setCourses(response);
+    })();
+  }, []));
 
   function handlePress() {
     navigation.navigate("NewCourse");
   }
 
+  // TODO: add region segment page
+  function handleSegmentPress(segment) {
+    console.log(segment);
+  }
+
   return (
     <View style={styles.container}>
-      <MapView
+      <GoogleMap
         style={styles.maps}
-        provider={PROVIDER_GOOGLE}
         region={REGION.korea}
         zoomEnabled={false}
         scrollEnabled={false}
+        segments={segments}
+        onSegmentPress={handleSegmentPress}
       />
       <Profile
         name={name}
@@ -47,7 +72,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   maps: {
-    width: "100%",
     height: "70%",
     borderRadius: 20,
   },

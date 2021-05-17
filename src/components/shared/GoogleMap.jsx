@@ -8,6 +8,10 @@ import character from "../../../assets/backpack.png";
 
 function GoogleMap({
   region,
+  zoomEnabled,
+  scrollEnabled,
+  segments = [],
+  onSegmentPress,
   schedules = [],
   myLocation,
   messages = [],
@@ -18,7 +22,17 @@ function GoogleMap({
       style={[styles.map, style]}
       provider={PROVIDER_GOOGLE}
       region={region}
+      zoomEnabled={zoomEnabled}
+      scrollEnabled={scrollEnabled}
     >
+      {segments.map((segment) => (
+        <IndexMarker
+          key={segment[0]._id}
+          coordinate={segment[0].region}
+          index={segment.length}
+          onPress={() => onSegmentPress(segment)}
+        />
+      ))}
       {myLocation && (
         <Marker coordinate={myLocation}>
           <Image source={character} style={{ width: 40, height: 40 }} />
