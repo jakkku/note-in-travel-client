@@ -35,7 +35,33 @@ function generateSpatialHashGrid(region = {}, items = []) {
     return { y: lngIndex, x: latIndex };
   };
 
-  result.getByIndices = (x, y) => result[y][x];
+  result.getByIndices = (x, y) => {
+    if (x < 0 || x > 9) return;
+    if (y < 0 || y > 9) return;
+
+    return result[y][x];
+  };
+
+  result.getWithNearbyByIndices = (x, y) => {
+    if (x < 0 || x > 9) return;
+    if (y < 0 || y > 9) return;
+
+    const minX = (x - 1 < 0) ? 0 : x - 1;
+    const maxX = (x + 1 > 9) ? 9 : x + 1;
+    const minY = (y - 1 < 0) ? 0 : y - 1;
+    const maxY = (y + 1 > 9) ? 9 : y + 1;
+    const composedItems = [];
+
+    for (let idxY = minY; idxY <= maxY; idxY++) {
+      for (let idxX = minX; idxX <= maxX; idxX++) {
+        if (result[idxY][idxX]) {
+          composedItems.push(...result[idxY][idxX]);
+        }
+      }
+    }
+
+    return composedItems;
+  };
 
   return result;
 }
