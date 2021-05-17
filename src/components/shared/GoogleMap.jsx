@@ -9,6 +9,7 @@ function GoogleMap({
   region,
   schedules = [],
   myLocation,
+  messages,
   style,
 }) {
   return (
@@ -27,6 +28,13 @@ function GoogleMap({
           key={site.fullName}
           coordinate={site.region}
           index={index}
+        />
+      ))}
+      {messages.map((message) => (
+        <Marker
+          key={message._id}
+          coordinate={message.location}
+          description={message.content}
         />
       ))}
     </MapView>

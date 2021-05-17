@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -15,6 +15,7 @@ import fetchData from "../utils/fetchData";
 import useRegion from "../hooks/useRegion";
 import useMyLocation from "../hooks/useMyLocation";
 import useErrorMessage from "../hooks/useErrorMsg";
+import generateSpatialHashGrid from "../utils/generateSpatialHashGrid";
 
 function CourseDetailScreen({
   route,
@@ -28,6 +29,32 @@ function CourseDetailScreen({
   const { region, changeRegion } = useRegion({});
   const myLocation = useMyLocation(isActiveMode);
   const { errorMsg, setErrorMsg } = useErrorMessage(null);
+
+  const [myIndices, setMyIndices] = useState({});
+  const spatialHashGrid = useMemo(
+    () => generateSpatialHashGrid(region, course.messages),
+    [region, course.messages],
+  );
+
+  useEffect(() => {
+    if (!spatialHashGrid || !myLocation) return;
+
+    const { latitude: myLat, longitude: myLng } = myLocation;
+    const newMyIndices = spatialHashGrid.getIndices(myLat, myLng);
+
+    if (!newMyIndices) return;
+
+    setMyIndices(newMyIndices);
+  }, [spatialHashGrid, myLocation]);
+
+  const nearbyMessages = useMemo(
+    () => {
+      if (!spatialHashGrid) return;
+
+      return spatialHashGrid.getWithNearbyByIndices(myIndices.x, myIndices.y);
+    },
+    [spatialHashGrid, myIndices.x, myIndices.y],
+  );
 
   const { id } = route.params;
 
@@ -57,10 +84,18 @@ function CourseDetailScreen({
 
   async function handleMessageSubmitAsync(content) {
     try {
+      if (!myIndices) {
+        setErrorMsg("코스 영역 밖에 있습니다.");
+        return;
+      }
+
       const message = { content, location: myLocation };
       const response = await fetchData("POST", `/course/${id}`, message);
 
-      course.messages.push(response);
+      setCourse((prev) => ({
+        ...prev,
+        messages: prev.messages.concat(response),
+      }));
       onMessageSubmit();
     } catch (err) {
       setErrorMsg(err.message);
@@ -69,7 +104,6 @@ function CourseDetailScreen({
 
   return (
     <View style={styles.container}>
-      {errorMsg && <Title text={errorMsg} />}
       {isLoading
         ? <ActivityIndicator size="large" />
         : (
@@ -78,11 +112,13 @@ function CourseDetailScreen({
               region={region}
               schedules={course.schedules}
               myLocation={myLocation}
+              messages={nearbyMessages}
               style={styles.map}
             />
             <Title text={`${course.creator.name}의 ${course.name}`} />
             <ScheduleList schedules={course.schedules} />
             <ModalWithBackground isOpen={isMessageFormOpen}>
+              {errorMsg && isMessageFormOpen && <Title text={errorMsg} />}
               <TextInputForm
                 placeholder="쪽지 내용을 입력하세요."
                 onSubmit={handleMessageSubmitAsync}
@@ -91,6 +127,7 @@ function CourseDetailScreen({
             </ModalWithBackground>
           </>
         )}
+      {errorMsg && !isMessageFormOpen && <Title text={errorMsg} />}
     </View>
   );
 }

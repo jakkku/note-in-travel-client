@@ -14,6 +14,9 @@ function generateSpatialHashGrid(region = {}, items = []) {
     longitude,
     longitudeDelta,
   } = region;
+
+  if (!latitude || !latitudeDelta || !longitude || !longitudeDelta) return;
+
   const latOrigin = latitude - (latitudeDelta / 2);
   const lngOrigin = longitude - (longitudeDelta / 2);
   const dLat = latitudeDelta / 10;
@@ -28,9 +31,14 @@ function generateSpatialHashGrid(region = {}, items = []) {
     result[lngIndex][latIndex] = area ? area.concat(item) : [item];
   });
 
-  result.getIndices = (location) => {
-    const latIndex = Math.floor((location.latitude - latOrigin) / dLat);
-    const lngIndex = Math.floor((location.longitude - lngOrigin) / dLng);
+  result.getIndices = (lat, lng) => {
+    if (!lat || !lng) return;
+
+    const latIndex = Math.floor((lat - latOrigin) / dLat);
+    const lngIndex = Math.floor((lng - lngOrigin) / dLng);
+
+    if (latIndex < 0 || latIndex > 9) return;
+    if (lngIndex < 0 || lngIndex > 9) return;
 
     return { y: lngIndex, x: latIndex };
   };
@@ -50,17 +58,17 @@ function generateSpatialHashGrid(region = {}, items = []) {
     const maxX = (x + 1 > 9) ? 9 : x + 1;
     const minY = (y - 1 < 0) ? 0 : y - 1;
     const maxY = (y + 1 > 9) ? 9 : y + 1;
-    const composedItems = [];
+    const combinedItems = [];
 
     for (let idxY = minY; idxY <= maxY; idxY++) {
       for (let idxX = minX; idxX <= maxX; idxX++) {
         if (result[idxY][idxX]) {
-          composedItems.push(...result[idxY][idxX]);
+          combinedItems.push(...result[idxY][idxX]);
         }
       }
     }
 
-    return composedItems;
+    return combinedItems;
   };
 
   return result;
