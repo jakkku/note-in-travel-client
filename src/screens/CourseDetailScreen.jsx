@@ -17,6 +17,7 @@ import useRegion from "../hooks/useRegion";
 import useMyLocation from "../hooks/useMyLocation";
 import useErrorMsg from "../hooks/useErrorMsg";
 import useNearbyMsg from "../hooks/useNearbyMsg";
+import CourseInfo from "../components/CourseInfo";
 
 function CourseDetailScreen({
   route,
@@ -24,6 +25,7 @@ function CourseDetailScreen({
   isMessageFormOpen,
   onMessageFormClose,
   onMessageSubmit,
+  onBlur = () => {},
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [course, setCourse] = useState({});
@@ -45,15 +47,17 @@ function CourseDetailScreen({
 
         setCourse(response);
         changeRegion(sites);
-        setIsLoading(false);
       } catch (err) {
         setErrorMsg(err.message);
+      } finally {
+        setIsLoading(false);
       }
     })(id);
 
     return () => {
       isCancelled = true;
       setIsLoading(true);
+      onBlur();
     };
   }, [id]));
 
@@ -90,8 +94,9 @@ function CourseDetailScreen({
               messages={nearbyMessages}
               style={styles.map}
             />
-            {errorMsg && !isMessageFormOpen && <Title text={errorMsg} />}
-            <Title text={`${course.creator.name}의 ${course.name}`} />
+            {errorMsg && !isMessageFormOpen
+              ? <Title text={errorMsg} />
+              : <CourseInfo course={course} />}
             <ScheduleList schedules={course.schedules} />
             <ModalWithBackground isOpen={isMessageFormOpen}>
               {errorMsg && isMessageFormOpen && <Title text={errorMsg} />}
