@@ -4,8 +4,6 @@ import { create, act } from "react-test-renderer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-// TODO: solve error
-import UserScreen from "../screens/UserScreen";
 import useNearbyMsg from "./useNearbyMsg";
 
 const Stack = createStackNavigator();
@@ -21,7 +19,7 @@ const MockedNavigator = ({ component, params = {} }) => (
   </NavigationContainer>
 );
 
-xdescribe(">>> HOOK --- USE NEARBY MSG", () => {
+describe(">>> HOOK --- USE NEARBY MSG", () => {
   const mockRegion = {
     latitude: 5,
     longitude: 5,
@@ -61,7 +59,7 @@ xdescribe(">>> HOOK --- USE NEARBY MSG", () => {
     return returnVal;
   }
 
-  it("+++ ", () => {
+  it("+++ return nearby messages", () => {
     const location1 = { latitude: 1.5, longitude: 1.5 };
     const location2 = { latitude: 2.5, longitude: 2.5 };
     let nearbyMsgData;
@@ -71,5 +69,11 @@ xdescribe(">>> HOOK --- USE NEARBY MSG", () => {
     });
 
     expect(nearbyMsgData.nearbyMessages.length).toBe(3);
+
+    act(() => {
+      nearbyMsgData = setup(mockRegion, mockMsgs, location2);
+    });
+
+    expect(nearbyMsgData.nearbyMessages.length).toBe(1);
   });
 });
