@@ -43,16 +43,18 @@ describe(">>> UTILS --- GENERATE SPATIAL HASH GIRD", () => {
   });
 
   it("+++ METHOD --- return indices", () => {
-    const { x, y } = generateSpatialHashGrid(region, items)
-      .getIndices(items[0].location);
+    const { latitude, longitude } = items[0].location;
+    const spatialHashGrid = generateSpatialHashGrid(region, items);
+    const { x, y } = spatialHashGrid.getIndices(latitude, longitude);
 
     expect(x).toBe(4);
     expect(y).toBe(4);
   });
 
   it("+++ METHOD --- return by indices", () => {
+    const { latitude, longitude } = items[0].location;
     const spatialHashGrid = generateSpatialHashGrid(region, items);
-    const { x, y } = spatialHashGrid.getIndices(items[0].location);
+    const { x, y } = spatialHashGrid.getIndices(latitude, longitude);
 
     expect(spatialHashGrid.getByIndices(x, y)[0]).toBe(items[0]);
     expect(spatialHashGrid.getByIndices(-1, -1)).toBe(undefined);
@@ -60,13 +62,14 @@ describe(">>> UTILS --- GENERATE SPATIAL HASH GIRD", () => {
   });
 
   it("+++ METHOD --- return array including target indices and nearby items", () => {
+    const { latitude, longitude } = items[0].location;
     const spatialHashGrid = generateSpatialHashGrid(region, items);
-    const { x, y } = spatialHashGrid.getIndices(items[0].location);
+    const { x, y } = spatialHashGrid.getIndices(latitude, longitude);
     const target = spatialHashGrid.getByIndices(x, y);
     const nearby = spatialHashGrid.getByIndices(x + 1, y);
     const composedItems = target.concat(...nearby);
 
     expect(Array.isArray(spatialHashGrid.getWithNearbyByIndices(x, y))).toBe(true);
-    expect(spatialHashGrid.getWithNearbyByIndices(x, y).length).toBe(composedItems.length);
+    expect(spatialHashGrid.getWithNearbyByIndices(x, y)).toEqual(composedItems);
   });
 });
