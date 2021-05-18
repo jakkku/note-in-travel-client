@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScheduleList;
+export default React.memo(ScheduleList);

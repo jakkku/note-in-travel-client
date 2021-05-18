@@ -10,7 +10,7 @@ export const loginUser = createAsyncThunk(
   "user/loginUserStatus",
   async ({ user, token }, { dispatch }) => {
     const { token: tokenByFetch, user: userByFetch } = token
-      ? await fetchData("GET", "/auth/user")
+      ? await fetchData("GET", "/user")
       : await fetchData("POST", "/auth/login", user);
 
     await SecureStore.setItemAsync("token", tokenByFetch);

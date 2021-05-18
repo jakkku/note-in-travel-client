@@ -18,6 +18,10 @@ function MainTabNavigator() {
     setIsActiveMode((prev) => !prev);
   }
 
+  function setActiveModeOff() {
+    setIsActiveMode(false);
+  }
+
   return (
     <Tab.Navigator
       backBehavior="initialRoute"
@@ -40,6 +44,7 @@ function MainTabNavigator() {
             isMessageFormOpen={isModalOpen}
             onMessageFormClose={closeModal}
             onMessageSubmit={closeModal}
+            onBlur={setActiveModeOff}
           />
         )}
       </Tab.Screen>
