@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   View,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 import Title from "../components/shared/Title";
 import GoogleMap from "../components/shared/GoogleMap";
@@ -17,12 +17,12 @@ import TextInputForm from "../components/TextInputForm";
 
 import fetchData from "../utils/fetchData";
 import calculateAwardPoint from "../utils/calculateAwardPoint";
+import useCourse from "../hooks/useCourse";
 import useRegion from "../hooks/useRegion";
 import useErrorMsg from "../hooks/useErrorMsg";
 import useNearbyMsg from "../hooks/useNearbyMsg";
 import useMyLocation from "../hooks/useMyLocation";
 import { toggleBookmark } from "../reducers/favoriteCoursesSlice";
-import useCourse from "../hooks/useCourse";
 
 function CourseDetailScreen({
   route: { params: { id } },
@@ -33,7 +33,6 @@ function CourseDetailScreen({
   onBlur = () => {},
 }) {
   const dispatch = useDispatch();
-  const myLocation = useMyLocation(isActiveMode);
   const [isLoading, setIsLoading] = useState(true);
   const { region, changeRegion } = useRegion({});
   const { errorMsg, setErrorMsg } = useErrorMsg(null);
@@ -44,6 +43,7 @@ function CourseDetailScreen({
     favorites,
     setFavorites,
   } = useCourse(id, { setIsLoading, changeRegion, setErrorMsg });
+  const myLocation = useMyLocation(isActiveMode, null, { setErrorMsg });
   const { nearbyMessages, myIndices } = useNearbyMsg(region, messages, myLocation);
   const awardPoint = calculateAwardPoint(favorites, messages);
 

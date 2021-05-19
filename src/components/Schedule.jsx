@@ -18,11 +18,15 @@ function Schedule({
   onIndexPress,
   accent,
 }) {
-  const isFavorite = useSelector((state) => !!selectFavoriteSiteBySiteFullName(state, site.fullName));
+  const isBookmarked = useSelector((state) => !!selectFavoriteSiteBySiteFullName(state, site.fullName));
   const dispatch = useDispatch();
 
   function handleLikePress() {
     dispatch(toggleSite(site));
+  }
+
+  function handleIndexPress() {
+    onIndexPress(scheduleIndex);
   }
 
   return (
@@ -30,7 +34,7 @@ function Schedule({
       <View>
         <TouchableOpacity
           style={[styles.indexContainer, accent && styles.accent]}
-          onPress={() => onIndexPress(scheduleIndex)}
+          onPress={handleIndexPress}
         >
           <Text style={styles.index}>{scheduleIndex}</Text>
         </TouchableOpacity>
@@ -42,7 +46,7 @@ function Schedule({
       </View>
       <IconButton
         type="FontAwesome"
-        name={isFavorite ? "heart" : "heart-o"}
+        name={isBookmarked ? "heart" : "heart-o"}
         color={THEME.color.accent}
         onPress={handleLikePress}
       />

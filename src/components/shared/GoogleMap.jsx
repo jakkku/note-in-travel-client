@@ -4,6 +4,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 import IndexMarker from "./IndexMarker";
 import MessageMarker from "./MessageMarker";
+
 import character from "../../../assets/backpack.png";
 
 function GoogleMap({

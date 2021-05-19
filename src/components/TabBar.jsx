@@ -15,15 +15,23 @@ function TabBar({
   const nav = navigation;
   const curRouteName = state.routeNames[state.index];
 
+  function handleHomeTabPress() {
+    nav.navigate("Home");
+  }
+
+  function handleUserTabPress() {
+    nav.navigate("User");
+  }
+
   return (
     <View style={styles.container}>
       <IconButton
         name="home"
-        onPress={() => nav.navigate("Home")}
+        onPress={handleHomeTabPress}
       />
       <IconButton
         name="user-alt"
-        onPress={() => nav.navigate("User")}
+        onPress={handleUserTabPress}
       />
       {curRouteName === "CourseDetail" && (
         <View style={styles.activeButtonContainer}>

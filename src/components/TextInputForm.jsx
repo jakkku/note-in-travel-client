@@ -4,9 +4,10 @@ import {
   TextInput,
   StyleSheet,
 } from "react-native";
-import THEME from "../constants/theme";
 
 import IconButton from "./shared/IconButton";
+
+import THEME from "../constants/theme";
 
 function TextInputForm({
   placeholder,
