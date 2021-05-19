@@ -4,6 +4,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import fetchData from "../utils/fetchData";
 import splitCourse from "../utils/splitCourse";
 
+/**
+ * hook to fetch course by course id from api server and split them suitably
+ * @param {string} courseId - to fetch from api server
+ * @param {object|null} setStates - to handle states being outside
+ * @returns object including setState and states of course info, messages, favorites
+ */
 function useCourse(courseId, { setIsLoading, changeRegion, setErrorMsg } = {}) {
   const [courseInfo, setCourseInfo] = useState({});
   const [messages, setMessages] = useState([]);

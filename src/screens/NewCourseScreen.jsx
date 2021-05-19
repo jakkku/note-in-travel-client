@@ -36,7 +36,7 @@ function NewCourseScreen({ navigation }) {
   const { region, changeRegion } = useRegion(REGION.korea);
   const { isModalOpen, openModal, closeModal } = useModal(false);
 
-  async function handleSearchPress(
+  async function handleSearchPressAsync(
     data,
     { geometry: { location, viewport } },
   ) {
@@ -91,7 +91,7 @@ function NewCourseScreen({ navigation }) {
   }
 
   function handleSitePreviewPress(site) {
-    const isExist = schedules.find((schedule) => schedule.site._id === site._id);
+    const isExist = !!schedules.find((schedule) => schedule.site._id === site._id);
 
     if (isExist) return;
 
@@ -108,7 +108,7 @@ function NewCourseScreen({ navigation }) {
         region={region}
         schedules={schedules}
       />
-      <GoogleSearchBar onPress={handleSearchPress} />
+      <GoogleSearchBar onPress={handleSearchPressAsync} />
       <ScheduleList
         schedules={schedules}
         onChange={setSchedules}

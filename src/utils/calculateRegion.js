@@ -1,8 +1,8 @@
 import calculateViewport from "./calcutateViewport";
 
 /**
- * function to calculate region for google map
- * @param {object|array} regions - region object or region list
+ * function to calculate center point of region list and view port with view padding
+ * @param {array} regions - region list
  * @param {number} viewPadding - ratio of view padding to apply
  * @returns region object having latitude, latitudeDelta, longitude, longitudeDelta
  */
