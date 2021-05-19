@@ -1,5 +1,9 @@
 import * as SecureStore from "expo-secure-store";
 
+/**
+ * function to generate header for fetching to api server
+ * @returns header object
+ */
 async function generateHeader() {
   const defaultHeader = { "Content-Type": "application/json" };
 
