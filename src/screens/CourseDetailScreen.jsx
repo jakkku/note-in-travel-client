@@ -22,7 +22,7 @@ import useRegion from "../hooks/useRegion";
 import useErrorMsg from "../hooks/useErrorMsg";
 import useNearbyMsg from "../hooks/useNearbyMsg";
 import useMyLocation from "../hooks/useMyLocation";
-import { toggleBookmark } from "../reducers/favoriteCoursesSlice";
+import { toggleCourseBookmark } from "../reducers/favoriteCoursesSlice";
 
 function CourseDetailScreen({
   route: { params: { id } },
@@ -49,7 +49,7 @@ function CourseDetailScreen({
 
   const handleBookmarkPressMemo = useCallback(async () => {
     try {
-      const actionResult = await dispatch(toggleBookmark(courseInfo._id));
+      const actionResult = await dispatch(toggleCourseBookmark(courseInfo._id));
       const { course: { favorites: newFavorites } } = unwrapResult(actionResult);
 
       setFavorites(newFavorites);

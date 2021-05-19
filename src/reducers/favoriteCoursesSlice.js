@@ -2,15 +2,15 @@ import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit"
 
 import fetchData from "../utils/fetchData";
 
-export const toggleBookmark = createAsyncThunk(
+export const toggleCourseBookmark = createAsyncThunk(
   "favoriteCourses/toggleBookmarkStatus",
   async (courseId, { getState }) => {
     const { favoriteCourses: { items } } = getState();
     const isBookmarked = !!items.find((favorireCourse) => favorireCourse._id === courseId);
 
     const response = isBookmarked
-      ? await fetchData("DELETE", `/user/favoriteCourse/${courseId}`)
-      : await fetchData("PATCH", `/user/favoriteCourse/${courseId}`);
+      ? await fetchData("DELETE", `/user/favoriteCourses/${courseId}`)
+      : await fetchData("PATCH", `/user/favoriteCourses/${courseId}`);
 
     return {
       isBookmarked,
@@ -36,25 +36,23 @@ const favoriteCoursesSlice = createSlice({
     },
   },
   extraReducers: {
-    [toggleBookmark.pending]: (state) => {
+    [toggleCourseBookmark.pending]: (state) => {
       if (state.status === "idle") {
         state.status = "pending";
       }
     },
-    [toggleBookmark.fulfilled]: (state, action) => {
+    [toggleCourseBookmark.fulfilled]: (state, action) => {
       if (state.status === "pending") {
         const { isBookmarked, course } = action.payload;
 
         state.status = "idle";
 
-        if (isBookmarked) {
-          state.items = state.items.filter((favoriteCourse) => favoriteCourse._id !== course._id);
-        } else {
-          state.items.push(course);
-        }
+        state.items = isBookmarked
+          ? state.items.filter((favoriteCourse) => favoriteCourse._id !== course._id)
+          : state.items.concat(course);
       }
     },
-    [toggleBookmark.rejected]: (state, action) => {
+    [toggleCourseBookmark.rejected]: (state, action) => {
       if (state.status === "pending") {
         state.error = action.error.message;
         state.status = "idle";

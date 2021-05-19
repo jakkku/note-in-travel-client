@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Text,
@@ -12,8 +12,8 @@ import Title from "./shared/Title";
 import IconButton from "./shared/IconButton";
 
 import THEME from "../constants/theme";
-import { toggleSite, selectFavoriteSiteBySiteId } from "../reducers/favoriteSitesSlice";
 import useAnimation from "../hooks/useAnimation";
+import { toggleSiteBookmark, selectFavoriteSiteBySiteId } from "../reducers/favoriteSitesSlice";
 
 function Schedule({
   schedule: { index: scheduleIndex, site },
@@ -25,7 +25,7 @@ function Schedule({
   const translateX = useAnimation(400, 0, 500);
 
   function handleLikePress() {
-    dispatch(toggleSite(site));
+    dispatch(toggleSiteBookmark(site._id));
   }
 
   function handleIndexPress() {
