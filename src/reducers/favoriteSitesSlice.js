@@ -17,16 +17,12 @@ const favoriteSitesSlice = createSlice({
     },
     toggleSite: (state, action) => {
       const favoriteSites = state.items;
-      const { fullName, shortName, region } = action.payload;
-      const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === fullName);
+      const site = action.payload;
+      const isBookmarked = favoriteSites.find((favoriteSite) => favoriteSite._id === site._id);
 
-      state.items = isFavorite
-        ? favoriteSites.filter((favoriteSite) => favoriteSite.fullName !== fullName)
-        : favoriteSites.concat({
-          fullName,
-          shortName,
-          region,
-        });
+      state.items = isBookmarked
+        ? favoriteSites.filter((favoriteSite) => favoriteSite._id !== site._id)
+        : favoriteSites.concat(site);
     },
   },
 });
@@ -37,9 +33,9 @@ export default favoriteSitesSlice.reducer;
 
 export const selectFavoriteSites = (state) => state.favoriteSites.items;
 
-export const selectFavoriteSiteBySiteFullName = createSelector(
-  [selectFavoriteSites, (_, siteFullName) => siteFullName],
-  (favoriteSites, siteFullName) => (
-    favoriteSites.find((favoriteSite) => favoriteSite.fullName === siteFullName)
+export const selectFavoriteSiteBySiteId = createSelector(
+  [selectFavoriteSites, (_, siteId) => siteId],
+  (favoriteSites, siteId) => (
+    favoriteSites.find((favoriteSite) => favoriteSite._id === siteId)
   ),
 );

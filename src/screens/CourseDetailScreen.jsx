@@ -60,7 +60,7 @@ function CourseDetailScreen({
 
   async function handleMessageSubmitAsync(content) {
     try {
-      if (!myIndices) {
+      if (!myIndices.x || !myIndices.y) {
         setErrorMsg("코스 영역 밖에 있습니다.");
         return;
       }
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "40%",
+    height: "50%",
     borderRadius: 20,
   },
 });

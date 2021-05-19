@@ -41,7 +41,7 @@ function GoogleMap({
       )}
       {schedules.map(({ site, index }) => (
         <IndexMarker
-          key={site.fullName}
+          key={site._id}
           coordinate={site.region}
           index={index}
         />

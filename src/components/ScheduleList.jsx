@@ -27,7 +27,7 @@ function ScheduleList({ schedules = [], onChange, style }) {
     <ScrollView style={[styles.container, style]}>
       {schedules.map((schedule) => (
         <Schedule
-          key={schedule.site.fullName}
+          key={schedule.site._id}
           schedule={schedule}
           onIndexPress={handleIndexPress}
           accent={selectedIndex && selectedIndex === schedule.index}

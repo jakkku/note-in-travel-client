@@ -23,6 +23,7 @@ import useRegion from "../hooks/useRegion";
 import useErrorMessage from "../hooks/useErrorMsg";
 import calcutateViewport from "../utils/calcutateViewport";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
+import fetchData from "../utils/fetchData";
 
 function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
@@ -33,36 +34,39 @@ function NewCourseScreen({ navigation }) {
   const { region, changeRegion } = useRegion(REGION.korea);
   const { isModalOpen, openModal, closeModal } = useModal(false);
 
-  function handleSearchPress(
+  async function handleSearchPress(
     data,
     { geometry: { location, viewport } },
   ) {
-    const { northeast, southwest } = viewport;
-    const { latitudeDelta, longitudeDelta } = calcutateViewport(northeast, southwest);
-    const { lat: latitude, lng: longitude } = location;
-    const nextRegion = {
-      latitude,
-      longitude,
-      latitudeDelta,
-      longitudeDelta,
-    };
-    const {
-      description: fullName,
-      structured_formatting: { main_text: shortName },
-    } = data;
+    try {
+      const { northeast, southwest } = viewport;
+      const { latitudeDelta, longitudeDelta } = calcutateViewport(northeast, southwest);
+      const { lat: latitude, lng: longitude } = location;
+      const nextRegion = {
+        latitude,
+        longitude,
+        latitudeDelta,
+        longitudeDelta,
+      };
+      const {
+        description: fullName,
+        structured_formatting: { main_text: shortName },
+      } = data;
+      const site = { shortName, fullName, region: nextRegion };
 
-    const newSchedule = {
-      index: schedules.length + 1,
-      site: {
-        shortName,
-        fullName,
-        region: nextRegion,
-      },
-    };
-    const newSchedules = schedules.concat(newSchedule);
+      const response = await fetchData("POST", "/site", site);
 
-    setSchedules(newSchedules);
-    changeRegion(newSchedules.map((schedule) => schedule.site.region));
+      const newSchedule = {
+        index: schedules.length + 1,
+        site: response,
+      };
+      const newSchedules = schedules.concat(newSchedule);
+
+      setSchedules(newSchedules);
+      changeRegion(newSchedules.map((schedule) => schedule.site.region));
+    } catch (err) {
+      setErrorMsg(err.message);
+    }
   }
 
   function handleSavePress() {

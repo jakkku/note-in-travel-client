@@ -11,14 +11,14 @@ import Title from "./shared/Title";
 import IconButton from "./shared/IconButton";
 
 import THEME from "../constants/theme";
-import { toggleSite, selectFavoriteSiteBySiteFullName } from "../reducers/favoriteSitesSlice";
+import { toggleSite, selectFavoriteSiteBySiteId } from "../reducers/favoriteSitesSlice";
 
 function Schedule({
   schedule: { index: scheduleIndex, site },
   onIndexPress,
   accent,
 }) {
-  const isBookmarked = useSelector((state) => !!selectFavoriteSiteBySiteFullName(state, site.fullName));
+  const isBookmarked = useSelector((state) => !!selectFavoriteSiteBySiteId(state, site._id));
   const dispatch = useDispatch();
 
   function handleLikePress() {
