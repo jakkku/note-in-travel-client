@@ -8,9 +8,9 @@ import { Marker } from "react-native-maps";
 
 import message from "../../../assets/message.png";
 
-function MessageMarker({ coordinate, style }) {
+function MessageMarker(props) {
   return (
-    <Marker coordinate={coordinate} style={style}>
+    <Marker {...props}>
       <View style={styles.markerContainer}>
         <Image
           style={{ width: 30, height: 30 }}

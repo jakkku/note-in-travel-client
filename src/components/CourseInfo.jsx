@@ -1,52 +1,42 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { useSelector } from "react-redux";
 
 import Title from "./shared/Title";
 import IconButton from "./shared/IconButton";
 import VectorIcon from "./shared/VectorIcon";
 
 import THEME from "../constants/theme";
-import useAwardPoint from "../hooks/useAwardPoint";
 import { selectUser } from "../reducers/userSlice";
-import { selectFavoriteCourseByCourseId, toggleBookmark } from "../reducers/favoriteCoursesSlice";
+import { selectFavoriteCourseByCourseId } from "../reducers/favoriteCoursesSlice";
 
-function CourseInfo({ course = {}, style }) {
+function CourseInfo({ course = {}, onBookmarkPress, style }) {
   const { _id: useId } = useSelector(selectUser);
-  const isFavorite = useSelector((state) => !!selectFavoriteCourseByCourseId(state, course._id));
-  const dispatch = useDispatch();
+  const isBookmarked = useSelector((state) => !!selectFavoriteCourseByCourseId(state, course._id));
 
-  const { awardPoint, chagneAwardPoint } = useAwardPoint(course);
+  const awardPoint = calculateAwardPoint(course);
   const isMyCourse = useId === course.creator._id;
 
-  async function handleBookmarkPress() {
-    try {
-      const actionResult = await dispatch(toggleBookmark(course));
-      const { course: decodedCourse } = unwrapResult(actionResult);
+  function calculateAwardPoint({ favorites, messages }) {
+    const favoritesPoint = favorites?.length * 2 ?? 0;
+    const messagesPoint = messages?.length ?? 0;
 
-      chagneAwardPoint(decodedCourse);
-    } catch (err) {
-      console.log(err.messages);
-    }
+    return favoritesPoint + messagesPoint;
   }
 
   return (
     <View style={[styles.container, style]}>
       <View style={styles.header}>
         <View style={styles.award}>
-          <VectorIcon
-            name="award"
-            color={THEME.color.accent}
-          />
+          <VectorIcon name="award" color={THEME.color.accent} />
           <Text>{awardPoint}</Text>
         </View>
-        {!isMyCourse && (
+        {isMyCourse && (
           <IconButton
             type="FontAwesome"
-            name={isFavorite ? "bookmark" : "bookmark-o"}
+            name={isBookmarked ? "bookmark" : "bookmark-o"}
             color={THEME.color.primitive}
-            onPress={handleBookmarkPress}
+            onPress={onBookmarkPress}
           />
         )}
       </View>

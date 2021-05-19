@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 import Title from "../components/shared/Title";
 import GoogleMap from "../components/shared/GoogleMap";
@@ -18,6 +20,7 @@ import useMyLocation from "../hooks/useMyLocation";
 import useErrorMsg from "../hooks/useErrorMsg";
 import useNearbyMsg from "../hooks/useNearbyMsg";
 import CourseInfo from "../components/CourseInfo";
+import { toggleBookmark } from "../reducers/favoriteCoursesSlice";
 
 function CourseDetailScreen({
   route,
@@ -27,6 +30,7 @@ function CourseDetailScreen({
   onMessageSubmit,
   onBlur = () => {},
 }) {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [course, setCourse] = useState({});
   const { region, changeRegion } = useRegion({});
@@ -34,6 +38,37 @@ function CourseDetailScreen({
   const { nearbyMessages, myIndices } = useNearbyMsg(region, course.messages, myLocation);
   const { errorMsg, setErrorMsg } = useErrorMsg(null);
   const { id } = route.params;
+
+  const handleBookmarkPressMemo = useCallback(async () => {
+    try {
+      const actionResult = await dispatch(toggleBookmark(course));
+      const { course: decodedCourse } = unwrapResult(actionResult);
+
+      setCourse(decodedCourse);
+    } catch (err) {
+      setErrorMsg(err.messages);
+    }
+  }, [course]);
+
+  async function handleMessageSubmitAsync(content) {
+    try {
+      if (!myIndices) {
+        setErrorMsg("코스 영역 밖에 있습니다.");
+        return;
+      }
+
+      const message = { content, location: myLocation };
+      const response = await fetchData("POST", `/course/${id}`, message);
+
+      setCourse((prev) => ({
+        ...prev,
+        messages: prev.messages.concat(response),
+      }));
+      onMessageSubmit();
+    } catch (err) {
+      setErrorMsg(err.message);
+    }
+  }
 
   useFocusEffect(useCallback(() => {
     let isCancelled = false;
@@ -61,26 +96,6 @@ function CourseDetailScreen({
     };
   }, [id]));
 
-  async function handleMessageSubmitAsync(content) {
-    try {
-      if (!myIndices) {
-        setErrorMsg("코스 영역 밖에 있습니다.");
-        return;
-      }
-
-      const message = { content, location: myLocation };
-      const response = await fetchData("POST", `/course/${id}`, message);
-
-      setCourse((prev) => ({
-        ...prev,
-        messages: prev.messages.concat(response),
-      }));
-      onMessageSubmit();
-    } catch (err) {
-      setErrorMsg(err.message);
-    }
-  }
-
   return (
     <View style={[styles.container, isLoading && styles.loading]}>
       {isLoading
@@ -96,7 +111,7 @@ function CourseDetailScreen({
             />
             {errorMsg && !isMessageFormOpen
               ? <Title text={errorMsg} />
-              : <CourseInfo course={course} />}
+              : <CourseInfo course={course} onBookmarkPress={handleBookmarkPressMemo} />}
             <ScheduleList schedules={course.schedules} />
             <ModalWithBackground isOpen={isMessageFormOpen}>
               {errorMsg && isMessageFormOpen && <Title text={errorMsg} />}
