@@ -1,7 +1,7 @@
 module.exports = {
   preset: "jest-expo",
   setupFiles: [
-    "<rootDir>/jest/setup.js",
+    "<rootDir>/testing/jest-setup.js",
   ],
   transform: {
     "^.+\\.js$": "babel-jest",
