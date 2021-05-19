@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
 import { useSelector } from "react-redux";
+import { View, StyleSheet, Text } from "react-native";
 
 import Title from "./shared/Title";
 import IconButton from "./shared/IconButton";
@@ -10,19 +10,16 @@ import THEME from "../constants/theme";
 import { selectUser } from "../reducers/userSlice";
 import { selectFavoriteCourseByCourseId } from "../reducers/favoriteCoursesSlice";
 
-function CourseInfo({ course = {}, onBookmarkPress, style }) {
+function CourseInfo({
+  courseInfo = {},
+  awardPoint,
+  onBookmarkPress,
+  style,
+}) {
   const { _id: useId } = useSelector(selectUser);
-  const isBookmarked = useSelector((state) => !!selectFavoriteCourseByCourseId(state, course._id));
+  const isBookmarked = useSelector((state) => !!selectFavoriteCourseByCourseId(state, courseInfo._id));
 
-  const awardPoint = calculateAwardPoint(course);
-  const isMyCourse = useId === course.creator._id;
-
-  function calculateAwardPoint({ favorites, messages }) {
-    const favoritesPoint = favorites?.length * 2 ?? 0;
-    const messagesPoint = messages?.length ?? 0;
-
-    return favoritesPoint + messagesPoint;
-  }
+  const isMyCourse = useId === courseInfo.creator?._id;
 
   return (
     <View style={[styles.container, style]}>
@@ -41,8 +38,8 @@ function CourseInfo({ course = {}, onBookmarkPress, style }) {
         )}
       </View>
       <View style={styles.body}>
-        <Title text={course.name} />
-        <Text>{` by ${course.creator.name}`}</Text>
+        <Title text={courseInfo.name} />
+        <Text>{` by ${courseInfo.creator?.name}`}</Text>
       </View>
     </View>
   );

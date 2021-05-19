@@ -4,13 +4,13 @@ import fetchData from "../utils/fetchData";
 
 export const toggleBookmark = createAsyncThunk(
   "favoriteCourses/toggleBookmarkStatus",
-  async (course, { getState }) => {
+  async (courseId, { getState }) => {
     const { favoriteCourses: { items } } = getState();
-    const isBookmarked = !!items.find((favorireCourse) => favorireCourse._id === course._id);
+    const isBookmarked = !!items.find((favorireCourse) => favorireCourse._id === courseId);
 
     const response = isBookmarked
-      ? await fetchData("DELETE", `/user/favoriteCourse/${course._id}`)
-      : await fetchData("PATCH", `/user/favoriteCourse/${course._id}`);
+      ? await fetchData("DELETE", `/user/favoriteCourse/${courseId}`)
+      : await fetchData("PATCH", `/user/favoriteCourse/${courseId}`);
 
     return {
       isBookmarked,

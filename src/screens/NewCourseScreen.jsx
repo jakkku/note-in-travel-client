@@ -21,8 +21,8 @@ import REGION from "../constants/region";
 import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
 import useErrorMessage from "../hooks/useErrorMsg";
-import { saveMyCourse } from "../reducers/myCoursesSlice";
 import calcutateViewport from "../utils/calcutateViewport";
+import { saveMyCourse } from "../reducers/myCoursesSlice";
 
 function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");

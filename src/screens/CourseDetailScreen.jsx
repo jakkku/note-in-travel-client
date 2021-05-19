@@ -11,19 +11,21 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import Title from "../components/shared/Title";
 import GoogleMap from "../components/shared/GoogleMap";
 import ModalWithBackground from "../components/shared/ModalWithBackground";
+import CourseInfo from "../components/CourseInfo";
 import ScheduleList from "../components/ScheduleList";
 import TextInputForm from "../components/TextInputForm";
 
 import fetchData from "../utils/fetchData";
+import calculateAwardPoint from "../utils/calculateAwardPoint";
 import useRegion from "../hooks/useRegion";
-import useMyLocation from "../hooks/useMyLocation";
 import useErrorMsg from "../hooks/useErrorMsg";
 import useNearbyMsg from "../hooks/useNearbyMsg";
-import CourseInfo from "../components/CourseInfo";
+import useMyLocation from "../hooks/useMyLocation";
 import { toggleBookmark } from "../reducers/favoriteCoursesSlice";
+import useCourse from "../hooks/useCourse";
 
 function CourseDetailScreen({
-  route,
+  route: { params: { id } },
   isActiveMode,
   isMessageFormOpen,
   onMessageFormClose,
@@ -31,24 +33,30 @@ function CourseDetailScreen({
   onBlur = () => {},
 }) {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [course, setCourse] = useState({});
-  const { region, changeRegion } = useRegion({});
   const myLocation = useMyLocation(isActiveMode);
-  const { nearbyMessages, myIndices } = useNearbyMsg(region, course.messages, myLocation);
+  const [isLoading, setIsLoading] = useState(true);
+  const { region, changeRegion } = useRegion({});
   const { errorMsg, setErrorMsg } = useErrorMsg(null);
-  const { id } = route.params;
+  const {
+    courseInfo,
+    messages,
+    setMessages,
+    favorites,
+    setFavorites,
+  } = useCourse(id, { setIsLoading, changeRegion, setErrorMsg });
+  const { nearbyMessages, myIndices } = useNearbyMsg(region, messages, myLocation);
+  const awardPoint = calculateAwardPoint(favorites, messages);
 
   const handleBookmarkPressMemo = useCallback(async () => {
     try {
-      const actionResult = await dispatch(toggleBookmark(course));
-      const { course: decodedCourse } = unwrapResult(actionResult);
+      const actionResult = await dispatch(toggleBookmark(courseInfo._id));
+      const { course: { favorites: newFavorites } } = unwrapResult(actionResult);
 
-      setCourse(decodedCourse);
+      setFavorites(newFavorites);
     } catch (err) {
       setErrorMsg(err.messages);
     }
-  }, [course]);
+  }, [courseInfo._id]);
 
   async function handleMessageSubmitAsync(content) {
     try {
@@ -60,40 +68,16 @@ function CourseDetailScreen({
       const message = { content, location: myLocation };
       const response = await fetchData("POST", `/course/${id}`, message);
 
-      setCourse((prev) => ({
-        ...prev,
-        messages: prev.messages.concat(response),
-      }));
+      setMessages((prev) => prev.concat(response));
       onMessageSubmit();
     } catch (err) {
       setErrorMsg(err.message);
     }
   }
 
-  useFocusEffect(useCallback(() => {
-    let isCancelled = false;
-
-    (async function fetchCourseById(courseId) {
-      try {
-        const response = await fetchData("GET", `/course/${courseId}`);
-        const sites = response.schedules.map((schedule) => schedule.site.region);
-
-        if (isCancelled) return;
-
-        setCourse(response);
-        changeRegion(sites);
-      } catch (err) {
-        setErrorMsg(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    })(id);
-
-    return () => {
-      isCancelled = true;
-      setIsLoading(true);
-      onBlur();
-    };
+  useFocusEffect(useCallback(() => () => {
+    onBlur();
+    setIsLoading(true);
   }, [id]));
 
   return (
@@ -104,15 +88,21 @@ function CourseDetailScreen({
           <>
             <GoogleMap
               region={region}
-              schedules={course.schedules}
+              schedules={courseInfo.schedules}
               myLocation={myLocation}
               messages={nearbyMessages}
               style={styles.map}
             />
             {errorMsg && !isMessageFormOpen
               ? <Title text={errorMsg} />
-              : <CourseInfo course={course} onBookmarkPress={handleBookmarkPressMemo} />}
-            <ScheduleList schedules={course.schedules} />
+              : (
+                <CourseInfo
+                  courseInfo={courseInfo}
+                  awardPoint={awardPoint}
+                  onBookmarkPress={handleBookmarkPressMemo}
+                />
+              )}
+            <ScheduleList schedules={courseInfo.schedules} />
             <ModalWithBackground isOpen={isMessageFormOpen}>
               {errorMsg && isMessageFormOpen && <Title text={errorMsg} />}
               <TextInputForm

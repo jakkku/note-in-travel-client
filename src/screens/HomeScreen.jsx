@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { View, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -7,24 +7,16 @@ import Profile from "../components/shared/Profile";
 import GoogleMap from "../components/shared/GoogleMap";
 import IconButton from "../components/shared/IconButton";
 import CoursePreviewList from "../components/shared/CoursePreviewList";
-import REGION from "../constants/region";
 
 import THEME from "../constants/theme";
-import useCourses from "../hooks/useCourses";
+import REGION from "../constants/region";
+import useCourseSegments from "../hooks/useCourseSegments";
 import { selectUser } from "../reducers/userSlice";
-import generateSpatialHashGrid from "../utils/generateSpatialHashGrid";
 
 function HomeScreen({ navigation }) {
   const { name, photoUrl } = useSelector(selectUser);
   const [targetCourses, setTargetCourses] = useState(null);
-  const courses = useCourses([]);
-  const segments = useMemo(() => {
-    if (!courses) return;
-
-    return generateSpatialHashGrid(REGION.korea, courses)
-      .flat()
-      .filter((segment) => segment);
-  }, [courses]);
+  const { segments } = useCourseSegments([]);
 
   useFocusEffect(useCallback(() => (
     () => setTargetCourses(null)
