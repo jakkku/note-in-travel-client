@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
   indexContainer: {
     justifyContent: "center",
     alignItems: "center",
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
     backgroundColor: THEME.color.primitive,
   },
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   dash: {
     width: 21,
-    height: 30,
+    height: 20,
     marginVertical: 10,
     borderRightWidth: 2,
     borderStyle: "solid",

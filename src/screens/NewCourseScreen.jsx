@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
   View,
-  StyleSheet,
   ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 
 import Title from "../components/shared/Title";
@@ -12,21 +12,23 @@ import SafeArea from "../components/shared/SafeArea";
 import GoogleMap from "../components/shared/GoogleMap";
 import IconButton from "../components/shared/IconButton";
 import GoogleSearchBar from "../components/shared/GoogleSearchBar";
+import SitePreviewList from "../components/shared/SitePreviewList";
 import ModalWithBackground from "../components/shared/ModalWithBackground";
 import ScheduleList from "../components/ScheduleList";
 import TextInputForm from "../components/TextInputForm";
 
 import THEME from "../constants/theme";
 import REGION from "../constants/region";
+import fetchData from "../utils/fetchData";
+import calcutateViewport from "../utils/calcutateViewport";
 import useModal from "../hooks/useModal";
 import useRegion from "../hooks/useRegion";
 import useErrorMessage from "../hooks/useErrorMsg";
-import calcutateViewport from "../utils/calcutateViewport";
 import { saveMyCourse } from "../reducers/myCoursesSlice";
-import fetchData from "../utils/fetchData";
 
 function NewCourseScreen({ navigation }) {
   const isLoading = useSelector((state) => state.myCourses.status === "pending");
+  const myFavoriteSites = useSelector((state) => state.favoriteSites.items);
   const dispatch = useDispatch();
 
   const [schedules, setSchedules] = useState([]);
@@ -55,12 +57,7 @@ function NewCourseScreen({ navigation }) {
       const site = { shortName, fullName, region: nextRegion };
 
       const response = await fetchData("POST", "/site", site);
-
-      const newSchedule = {
-        index: schedules.length + 1,
-        site: response,
-      };
-      const newSchedules = schedules.concat(newSchedule);
+      const newSchedules = schedules.concat({ index: schedules.length + 1, site: response });
 
       setSchedules(newSchedules);
       changeRegion(newSchedules.map((schedule) => schedule.site.region));
@@ -93,6 +90,17 @@ function NewCourseScreen({ navigation }) {
     }
   }
 
+  function handleSitePreviewPress(site) {
+    const isExist = schedules.find((schedule) => schedule.site._id === site._id);
+
+    if (isExist) return;
+
+    const newSchedules = schedules.concat({ index: schedules.length + 1, site });
+
+    setSchedules(newSchedules);
+    changeRegion(newSchedules.map((schedule) => schedule.site.region));
+  }
+
   return (
     <View style={[styles.container, isLoading && styles.loading]}>
       <GoogleMap
@@ -104,6 +112,10 @@ function NewCourseScreen({ navigation }) {
       <ScheduleList
         schedules={schedules}
         onChange={setSchedules}
+      />
+      <SitePreviewList
+        sites={myFavoriteSites}
+        onSitePress={handleSitePreviewPress}
       />
       <IconButton
         name="save"
