@@ -28,7 +28,7 @@ function CourseInfo({
           <VectorIcon name="award" color={THEME.color.accent} />
           <Text>{awardPoint}</Text>
         </View>
-        {isMyCourse && (
+        {!isMyCourse && (
           <IconButton
             type="FontAwesome"
             name={isBookmarked ? "bookmark" : "bookmark-o"}
