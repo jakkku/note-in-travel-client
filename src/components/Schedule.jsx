@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 
 import Title from "./shared/Title";
@@ -12,6 +13,7 @@ import IconButton from "./shared/IconButton";
 
 import THEME from "../constants/theme";
 import { toggleSite, selectFavoriteSiteBySiteId } from "../reducers/favoriteSitesSlice";
+import useAnimation from "../hooks/useAnimation";
 
 function Schedule({
   schedule: { index: scheduleIndex, site },
@@ -20,6 +22,7 @@ function Schedule({
 }) {
   const isBookmarked = useSelector((state) => !!selectFavoriteSiteBySiteId(state, site._id));
   const dispatch = useDispatch();
+  const translateX = useAnimation(400, 0, 500);
 
   function handleLikePress() {
     dispatch(toggleSite(site));
@@ -30,7 +33,7 @@ function Schedule({
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { transform: [{ translateX }] }]}>
       <View>
         <TouchableOpacity
           style={[styles.indexContainer, accent && styles.accent]}
@@ -50,7 +53,7 @@ function Schedule({
         color={THEME.color.accent}
         onPress={handleLikePress}
       />
-    </View>
+    </Animated.View>
   );
 }
 
