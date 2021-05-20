@@ -47,7 +47,9 @@ function CourseDetailScreen({
   const { nearbyMessages, myIndices } = useNearbyMsg(region, messages, myLocation);
   const awardPoint = calculateAwardPoint(favorites, messages);
 
-  const handleBookmarkPressMemo = useCallback(async () => {
+  const handleBookmarkPressAsyncMemo = useCallback(handleBookmarkPressAsync, [courseInfo._id]);
+
+  async function handleBookmarkPressAsync() {
     try {
       const actionResult = await dispatch(toggleCourseBookmark(courseInfo._id));
       const { course: { favorites: newFavorites } } = unwrapResult(actionResult);
@@ -56,7 +58,7 @@ function CourseDetailScreen({
     } catch (err) {
       setErrorMsg(err.messages);
     }
-  }, [courseInfo._id]);
+  }
 
   async function handleMessageSubmitAsync(content) {
     try {
@@ -78,7 +80,7 @@ function CourseDetailScreen({
   useFocusEffect(useCallback(() => () => {
     onBlur();
     setIsLoading(true);
-  }, [id]));
+  }, [onBlur]));
 
   return (
     <View style={[styles.container, isLoading && styles.loading]}>
@@ -93,23 +95,21 @@ function CourseDetailScreen({
               messages={nearbyMessages}
               style={styles.map}
             />
-            {errorMsg && !isMessageFormOpen
-              ? <Title text={errorMsg} />
-              : (
-                <CourseInfo
-                  courseInfo={courseInfo}
-                  awardPoint={awardPoint}
-                  onBookmarkPress={handleBookmarkPressMemo}
+            <CourseInfo
+              courseInfo={courseInfo}
+              awardPoint={awardPoint}
+              onBookmarkPress={handleBookmarkPressAsyncMemo}
+            />
+            <ScheduleList schedules={courseInfo.schedules} />
+            <ModalWithBackground isOpen={isMessageFormOpen || !!errorMsg}>
+              {errorMsg && <Title text={errorMsg} />}
+              {isMessageFormOpen && (
+                <TextInputForm
+                  placeholder="쪽지 내용을 입력하세요."
+                  onSubmit={handleMessageSubmitAsync}
+                  onClose={onMessageFormClose}
                 />
               )}
-            <ScheduleList schedules={courseInfo.schedules} />
-            <ModalWithBackground isOpen={isMessageFormOpen}>
-              {errorMsg && isMessageFormOpen && <Title text={errorMsg} />}
-              <TextInputForm
-                placeholder="쪽지 내용을 입력하세요."
-                onSubmit={handleMessageSubmitAsync}
-                onClose={onMessageFormClose}
-              />
             </ModalWithBackground>
           </>
         )}

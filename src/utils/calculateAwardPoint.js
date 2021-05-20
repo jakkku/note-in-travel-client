@@ -4,9 +4,9 @@
  * @param {array} messages - number of messages in the course
  * @returns award point
  */
-function calculateAwardPoint(favorites, messages) {
-  const favoritesPoint = favorites?.length * 2 ?? 0;
-  const messagesPoint = messages?.length ?? 0;
+function calculateAwardPoint(favorites = [], messages = []) {
+  const favoritesPoint = favorites.length * 2 ?? 0;
+  const messagesPoint = messages.length ?? 0;
 
   return favoritesPoint + messagesPoint;
 }
