@@ -17,7 +17,9 @@ function CourseInfo({
   style,
 }) {
   const { _id: useId } = useSelector(selectUser);
-  const isBookmarked = useSelector((state) => !!selectFavoriteCourseByCourseId(state, courseInfo._id));
+  const isBookmarked = useSelector((state) => (
+    !!selectFavoriteCourseByCourseId(state, courseInfo._id)
+  ));
 
   const isMyCourse = useId === courseInfo.creator?._id;
 
@@ -26,7 +28,7 @@ function CourseInfo({
       <View style={styles.header}>
         <View style={styles.award}>
           <VectorIcon name="award" color={THEME.color.accent} />
-          <Text>{awardPoint}</Text>
+          <Text testID="awardPoint">{awardPoint}</Text>
         </View>
         {!isMyCourse && (
           <IconButton
@@ -34,6 +36,7 @@ function CourseInfo({
             name={isBookmarked ? "bookmark" : "bookmark-o"}
             color={THEME.color.primitive}
             onPress={onBookmarkPress}
+            testID="bookmarkButton"
           />
         )}
       </View>

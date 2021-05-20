@@ -28,10 +28,12 @@ function TabBar({
       <IconButton
         name="home"
         onPress={handleHomeTabPress}
+        testID="homeTab"
       />
       <IconButton
         name="user-alt"
         onPress={handleUserTabPress}
+        testID="userTab"
       />
       {curRouteName === "CourseDetail" && (
         <View style={styles.activeButtonContainer}>
@@ -40,6 +42,7 @@ function TabBar({
             name={isActiveMode ? "paper-plane" : "plane-departure"}
             onPress={isActiveMode ? onActiveButtonPress : null}
             onLongPress={onActiveButtonLongPress}
+            testID="activeButton"
           />
         </View>
       )}

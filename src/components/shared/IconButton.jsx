@@ -8,15 +8,17 @@ function IconButton({
   name,
   color,
   size,
-  onPress,
-  onLongPress,
+  onPress = () => {},
+  onLongPress = () => {},
   style,
+  testID,
 }) {
   return (
     <TouchableOpacity
       style={style}
       onPress={onPress}
       onLongPress={onLongPress}
+      testID={testID}
     >
       <VectorIcon
         type={type}
