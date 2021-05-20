@@ -9,8 +9,8 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 
-import { loginUser } from "../reducers/userSlice";
 import loginWithGoogleAsync from "../utils/loginWithGoogleAsync";
+import { loginUser } from "../reducers/userSlice";
 
 function WelcomeScreen() {
   const isLoading = useSelector((state) => state.user.status === "pending");

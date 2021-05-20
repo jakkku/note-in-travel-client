@@ -1,23 +1,8 @@
 import React from "react";
 import { create, act } from "react-test-renderer";
 
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-
+import MockedNavigator from "../../testing/MockedNavigator";
 import useNearbyMsg from "./useNearbyMsg";
-
-const Stack = createStackNavigator();
-const MockedNavigator = ({ component, params = {} }) => (
-  <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen
-        name="MockedScreen"
-        component={component}
-        initialParams={params}
-      />
-    </Stack.Navigator>
-  </NavigationContainer>
-);
 
 describe(">>> HOOK --- USE NEARBY MSG", () => {
   const mockRegion = {

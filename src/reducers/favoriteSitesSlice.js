@@ -1,4 +1,23 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
+
+import fetchData from "../utils/fetchData";
+
+export const toggleSiteBookmark = createAsyncThunk(
+  "favoriteSites/toggleSiteStatus",
+  async (siteId, { getState }) => {
+    const { favoriteSites: { items } } = getState();
+    const isBookmarked = !!items.find((favoriteSite) => favoriteSite._id === siteId);
+
+    const response = isBookmarked
+      ? await fetchData("DELETE", `/user/favoriteSites/${siteId}`)
+      : await fetchData("PATCH", `/user/favoriteSites/${siteId}`);
+
+    return {
+      isBookmarked,
+      site: response,
+    };
+  },
+);
 
 const initialState = {
   items: [],
@@ -15,31 +34,42 @@ const favoriteSitesSlice = createSlice({
 
       state.items = favoriteSites;
     },
-    toggleSite: (state, action) => {
-      const favoriteSites = state.items;
-      const { fullName, shortName, region } = action.payload;
-      const isFavorite = favoriteSites.find((favoriteSite) => favoriteSite.fullName === fullName);
+  },
+  extraReducers: {
+    [toggleSiteBookmark.pending]: (state) => {
+      if (state.status === "idle") {
+        state.status = "pending";
+      }
+    },
+    [toggleSiteBookmark.fulfilled]: (state, action) => {
+      if (state.status === "pending") {
+        const { isBookmarked, site } = action.payload;
 
-      state.items = isFavorite
-        ? favoriteSites.filter((favoriteSite) => favoriteSite.fullName !== fullName)
-        : favoriteSites.concat({
-          fullName,
-          shortName,
-          region,
-        });
+        state.status = "idle";
+
+        state.items = isBookmarked
+          ? state.items.filter((favoriteSite) => favoriteSite._id !== site._id)
+          : state.items.concat(site);
+      }
+    },
+    [toggleSiteBookmark.rejected]: (state, action) => {
+      if (state.status === "pending") {
+        state.error = action.error.message;
+        state.status = "idle";
+      }
     },
   },
 });
 
-export const { initFavoriteSites, toggleSite } = favoriteSitesSlice.actions;
+export const { initFavoriteSites } = favoriteSitesSlice.actions;
 
 export default favoriteSitesSlice.reducer;
 
 export const selectFavoriteSites = (state) => state.favoriteSites.items;
 
-export const selectFavoriteSiteBySiteFullName = createSelector(
-  [selectFavoriteSites, (_, siteFullName) => siteFullName],
-  (favoriteSites, siteFullName) => (
-    favoriteSites.find((favoriteSite) => favoriteSite.fullName === siteFullName)
+export const selectFavoriteSiteBySiteId = createSelector(
+  [selectFavoriteSites, (_, siteId) => siteId],
+  (favoriteSites, siteId) => (
+    favoriteSites.find((favoriteSite) => favoriteSite._id === siteId)
   ),
 );

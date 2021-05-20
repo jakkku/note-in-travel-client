@@ -2,22 +2,25 @@ import { useState } from "react";
 
 import calculateRegion from "../utils/calculateRegion";
 
+/**
+ * hook to deal with region and region list
+ * @param {object|array} regions - one region object or region list
+ * @param {number} viewPadding - ratio of view padding to apply
+ * @returns region object having latitude, latitudeDelta, longitude, longitudeDelta
+ */
 function useRegion(regions = {}, viewPadding) {
-  const [region, setRegion] = useState(() => {
-    if (!Array.isArray(regions)) {
-      return regions;
-    }
-
-    return calculateRegion(regions, viewPadding);
-  });
+  const [region, setRegion] = useState(() => verifyRegion(regions, viewPadding));
 
   function changeRegion(sites, changedViewPadding) {
-    if (!Array.isArray(sites)) {
-      setRegion(sites);
-      return;
-    }
+    const verified = verifyRegion(sites, changedViewPadding);
 
-    setRegion(calculateRegion(sites, changedViewPadding));
+    setRegion(verified);
+  }
+
+  function verifyRegion(rowRegions, rowViewPadding) {
+    return Array.isArray(rowRegions)
+      ? calculateRegion(rowRegions, rowViewPadding)
+      : rowRegions;
   }
 
   return { region, changeRegion };

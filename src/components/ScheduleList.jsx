@@ -5,7 +5,7 @@ import Schedule from "./Schedule";
 
 import swapSchedule from "../utils/swapSchedule";
 
-function ScheduleList({ schedules, onChange, style }) {
+function ScheduleList({ schedules = [], onChange, style }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   function handleIndexPress(scheduleIndex) {
@@ -27,7 +27,7 @@ function ScheduleList({ schedules, onChange, style }) {
     <ScrollView style={[styles.container, style]}>
       {schedules.map((schedule) => (
         <Schedule
-          key={schedule.site.fullName}
+          key={schedule.site._id}
           schedule={schedule}
           onIndexPress={handleIndexPress}
           accent={selectedIndex && selectedIndex === schedule.index}

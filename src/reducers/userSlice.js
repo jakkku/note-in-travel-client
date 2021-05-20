@@ -21,7 +21,19 @@ export const loginUser = createAsyncThunk(
     dispatch(initFavoriteSites(favoriteSites));
     dispatch(initMyCourses(myCourses));
 
-    return userByFetch;
+    const {
+      _id,
+      email,
+      name,
+      photoUrl,
+    } = userByFetch;
+
+    return {
+      _id,
+      email,
+      name,
+      photoUrl,
+    };
   },
 );
 
@@ -43,19 +55,7 @@ const userSlice = createSlice({
     },
     [loginUser.fulfilled]: (state, action) => {
       if (state.status === "pending") {
-        const {
-          _id,
-          email,
-          name,
-          photoUrl,
-        } = action.payload;
-
-        state.value = {
-          _id,
-          email,
-          name,
-          photoUrl,
-        };
+        state.value = action.payload;
         state.status = "idle";
       }
     },

@@ -5,32 +5,39 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 
 import Title from "./shared/Title";
 import IconButton from "./shared/IconButton";
 
 import THEME from "../constants/theme";
-import { toggleSite, selectFavoriteSiteBySiteFullName } from "../reducers/favoriteSitesSlice";
+import useAnimation from "../hooks/useAnimation";
+import { toggleSiteBookmark, selectFavoriteSiteBySiteId } from "../reducers/favoriteSitesSlice";
 
 function Schedule({
   schedule: { index: scheduleIndex, site },
   onIndexPress,
   accent,
 }) {
-  const isFavorite = useSelector((state) => !!selectFavoriteSiteBySiteFullName(state, site.fullName));
+  const isBookmarked = useSelector((state) => !!selectFavoriteSiteBySiteId(state, site._id));
   const dispatch = useDispatch();
+  const translateX = useAnimation(400, 0, 500);
 
   function handleLikePress() {
-    dispatch(toggleSite(site));
+    dispatch(toggleSiteBookmark(site._id));
+  }
+
+  function handleIndexPress() {
+    onIndexPress(scheduleIndex);
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { transform: [{ translateX }] }]}>
       <View>
         <TouchableOpacity
           style={[styles.indexContainer, accent && styles.accent]}
-          onPress={() => onIndexPress(scheduleIndex)}
+          onPress={handleIndexPress}
         >
           <Text style={styles.index}>{scheduleIndex}</Text>
         </TouchableOpacity>
@@ -42,11 +49,11 @@ function Schedule({
       </View>
       <IconButton
         type="FontAwesome"
-        name={isFavorite ? "heart" : "heart-o"}
+        name={isBookmarked ? "heart" : "heart-o"}
         color={THEME.color.accent}
         onPress={handleLikePress}
       />
-    </View>
+    </Animated.View>
   );
 }
 
@@ -59,8 +66,8 @@ const styles = StyleSheet.create({
   indexContainer: {
     justifyContent: "center",
     alignItems: "center",
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
     backgroundColor: THEME.color.primitive,
   },
@@ -74,7 +81,7 @@ const styles = StyleSheet.create({
   },
   dash: {
     width: 21,
-    height: 30,
+    height: 20,
     marginVertical: 10,
     borderRightWidth: 2,
     borderStyle: "solid",

@@ -1,58 +1,45 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { View, StyleSheet, Text } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 import Title from "./shared/Title";
 import IconButton from "./shared/IconButton";
 import VectorIcon from "./shared/VectorIcon";
 
 import THEME from "../constants/theme";
-import useAwardPoint from "../hooks/useAwardPoint";
 import { selectUser } from "../reducers/userSlice";
-import { selectFavoriteCourseByCourseId, toggleBookmark } from "../reducers/favoriteCoursesSlice";
+import { selectFavoriteCourseByCourseId } from "../reducers/favoriteCoursesSlice";
 
-function CourseInfo({ course = {}, style }) {
+function CourseInfo({
+  courseInfo = {},
+  awardPoint,
+  onBookmarkPress,
+  style,
+}) {
   const { _id: useId } = useSelector(selectUser);
-  const isFavorite = useSelector((state) => !!selectFavoriteCourseByCourseId(state, course._id));
-  const dispatch = useDispatch();
+  const isBookmarked = useSelector((state) => !!selectFavoriteCourseByCourseId(state, courseInfo._id));
 
-  const { awardPoint, chagneAwardPoint } = useAwardPoint(course);
-  const isMyCourse = useId === course.creator._id;
-
-  async function handleBookmarkPress() {
-    try {
-      const actionResult = await dispatch(toggleBookmark(course));
-      const { course: decodedCourse } = unwrapResult(actionResult);
-
-      chagneAwardPoint(decodedCourse);
-    } catch (err) {
-      console.log(err.messages);
-    }
-  }
+  const isMyCourse = useId === courseInfo.creator?._id;
 
   return (
     <View style={[styles.container, style]}>
       <View style={styles.header}>
         <View style={styles.award}>
-          <VectorIcon
-            name="award"
-            color={THEME.color.accent}
-          />
+          <VectorIcon name="award" color={THEME.color.accent} />
           <Text>{awardPoint}</Text>
         </View>
         {!isMyCourse && (
           <IconButton
             type="FontAwesome"
-            name={isFavorite ? "bookmark" : "bookmark-o"}
+            name={isBookmarked ? "bookmark" : "bookmark-o"}
             color={THEME.color.primitive}
-            onPress={handleBookmarkPress}
+            onPress={onBookmarkPress}
           />
         )}
       </View>
       <View style={styles.body}>
-        <Title text={course.name} />
-        <Text>{` by ${course.creator.name}`}</Text>
+        <Title text={courseInfo.name} />
+        <Text>{` by ${courseInfo.creator?.name}`}</Text>
       </View>
     </View>
   );

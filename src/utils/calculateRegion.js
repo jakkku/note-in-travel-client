@@ -1,5 +1,11 @@
 import calculateViewport from "./calcutateViewport";
 
+/**
+ * function to calculate center point of region list and view port with view padding
+ * @param {array} regions - region list
+ * @param {number} viewPadding - ratio of view padding to apply
+ * @returns region object having latitude, latitudeDelta, longitude, longitudeDelta
+ */
 function calculateRegion(regions, viewPadding = 1.5) {
   let result = {
     latitude: 0,

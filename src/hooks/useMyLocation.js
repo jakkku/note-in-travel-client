@@ -4,7 +4,14 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import MAP from "../constants/map";
 
-function useMyLocation(isActive, options = MAP.location.watchOptions) {
+/**
+ * hook to deal with my location got from device gps
+ * @param {boolean} isActive - turn on and off tracking my location
+ * @param {object} options - of location to apply
+ * @param {object|null} setStates - to handle error message
+ * @returns my location got from device gps
+ */
+function useMyLocation(isActive, options = MAP.location.watchOptions, { setErrorMsg } = {}) {
   const [myLocation, setMyLocation] = useState(null);
 
   useFocusEffect(useCallback(() => {
@@ -16,8 +23,7 @@ function useMyLocation(isActive, options = MAP.location.watchOptions) {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
-        // TODO: add error handling
-        console.log("Permission to access location was denied.");
+        setErrorMsg && setErrorMsg("Permission to access location was denied.");
         return;
       }
 
