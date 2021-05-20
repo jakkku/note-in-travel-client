@@ -17,13 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "in.sungj.pickervel"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/world.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "in.sungj.pickervel"
     },
     "web": {
       "favicon": "./assets/favicon.png"
