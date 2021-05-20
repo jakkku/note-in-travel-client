@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import TabBar from "../components/TabBar";
@@ -13,6 +13,7 @@ const Tab = createBottomTabNavigator();
 function MainTabNavigator() {
   const [isActiveMode, setIsActiveMode] = useState(false);
   const { isModalOpen, openModal, closeModal } = useModal(false);
+  const setActiveModeOffMemo = useCallback(setActiveModeOff, [setIsActiveMode]);
 
   function toggleMode() {
     setIsActiveMode((prev) => !prev);
@@ -44,7 +45,7 @@ function MainTabNavigator() {
             isMessageFormOpen={isModalOpen}
             onMessageFormClose={closeModal}
             onMessageSubmit={closeModal}
-            onBlur={setActiveModeOff}
+            onBlur={setActiveModeOffMemo}
           />
         )}
       </Tab.Screen>

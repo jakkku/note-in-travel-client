@@ -38,6 +38,7 @@ function Schedule({
         <TouchableOpacity
           style={[styles.indexContainer, accent && styles.accent]}
           onPress={handleIndexPress}
+          testID="indexButton"
         >
           <Text style={styles.index}>{scheduleIndex}</Text>
         </TouchableOpacity>
@@ -52,6 +53,7 @@ function Schedule({
         name={isBookmarked ? "heart" : "heart-o"}
         color={THEME.color.accent}
         onPress={handleLikePress}
+        testID="likeButton"
       />
     </Animated.View>
   );

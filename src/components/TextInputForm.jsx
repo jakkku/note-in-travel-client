@@ -38,6 +38,7 @@ function TextInputForm({
           color={THEME.color.primitive}
           size={30}
           onPress={handlePress}
+          testID="saveButton"
         />
         <IconButton
           type="FontAwesome"
@@ -45,6 +46,7 @@ function TextInputForm({
           size={30}
           color={THEME.color.accent}
           onPress={onClose}
+          testID="closeButton"
         />
       </View>
     </View>

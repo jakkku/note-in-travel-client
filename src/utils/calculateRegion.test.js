@@ -1,13 +1,16 @@
 import calculateRegion from "./calculateRegion";
 
-import REGION from "../constants/region";
-
 describe(">>> UTILS --- CALCULATE REGION", () => {
   it("+++ pass region for one location", () => {
-    const { korea } = REGION;
     const viewPadding = 1;
+    const region = {
+      latitude: 5,
+      longitude: 5,
+      latitudeDelta: 10,
+      longitudeDelta: 10,
+    };
 
-    expect(calculateRegion([korea], viewPadding)).toEqual(korea);
+    expect(calculateRegion([region], viewPadding)).toEqual(region);
   });
 
   it("+++ pass region list", () => {
