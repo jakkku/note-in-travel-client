@@ -45,6 +45,7 @@ module.exports = {
     "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/label-has-for": "off",
     "react-hooks/exhaustive-deps": "warn",
+    "import/no-cycle": "off",
 
     // expo
     "import/no-unresolved": [2, { ignore: ["@env"] }],
