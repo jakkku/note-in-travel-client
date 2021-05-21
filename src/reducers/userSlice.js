@@ -46,7 +46,13 @@ const initialState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    logoutUser: () => {
+      SecureStore.deleteItemAsync("token");
+
+      return initialState;
+    },
+  },
   extraReducers: {
     [loginUser.pending]: (state) => {
       if (state.status === "idle") {
@@ -68,6 +74,8 @@ const userSlice = createSlice({
   },
 });
 
+export const { logoutUser } = userSlice.actions;
+
 export default userSlice.reducer;
 
-export const selectUser = (state) => state.user.value;
+export const selectUser = (state) => state.user.value || {};

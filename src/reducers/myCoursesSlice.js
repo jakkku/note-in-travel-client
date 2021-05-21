@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import fetchData from "../utils/fetchData";
+import { logoutUser } from "./userSlice";
 
 export const saveMyCourse = createAsyncThunk(
   "myCourses/saveMyCourseStatus",
@@ -27,6 +29,7 @@ const myCoursesSlice = createSlice({
     },
   },
   extraReducers: {
+    [logoutUser]: () => initialState,
     [saveMyCourse.pending]: (state) => {
       if (state.status === "idle") {
         state.status = "pending";

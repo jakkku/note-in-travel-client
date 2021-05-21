@@ -1,5 +1,5 @@
 import * as Google from "expo-google-app-auth";
-import { IOS_CLIENT_ID } from "@env";
+import { IOS_CLIENT_ID, ANDROID_CLIENT_ID } from "@env";
 
 /**
  * login user with google auth
@@ -12,6 +12,7 @@ export default async function loginWithGoogleAsync() {
   try {
     const result = await Google.logInAsync({
       iosClientId: IOS_CLIENT_ID,
+      androidClientId: ANDROID_CLIENT_ID,
       scopes: ["profile", "email"],
     });
 
