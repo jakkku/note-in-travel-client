@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 
 import fetchData from "../utils/fetchData";
+import { logoutUser } from "./userSlice";
 
 export const toggleCourseBookmark = createAsyncThunk(
   "favoriteCourses/toggleBookmarkStatus",
@@ -36,6 +37,7 @@ const favoriteCoursesSlice = createSlice({
     },
   },
   extraReducers: {
+    [logoutUser]: () => initialState,
     [toggleCourseBookmark.pending]: (state) => {
       if (state.status === "idle") {
         state.status = "pending";
