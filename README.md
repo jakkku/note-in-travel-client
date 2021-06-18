@@ -63,11 +63,13 @@
 
 ## 🚀키워드
 **`Redux Normalize`**, **`Re-rendering`**  
+[코드 링크](https://github.com/sungjinsama/note-in-travel-client/blob/master/src/reducers/userSlice.js)  
 지난 1차 프로젝트에서 AWS 요금이 청구된 경험을 하며 '서버에 요청을 보내는 부분도 최적화가 필요하지 않을까?'라는 생각을 하게되었습니다. 원인은 리팩토링 과정에서 소켓 연결 로직에서의 실수로 발생한 일이었지만, 이번 프로젝트에서 서버 요청에서의 최적화를 해보고 싶었습니다.  
 로그인 시 유저관련 정보에 생성한 일정, 즐겨찾기 목록 등의 데이터를 함께 받는 것은 자연스럽다고 판단하였고, 즐겨찾기 목록 등의 데이터를 위한 요청을 별도로 분리하고 싶지 않았습니다. 하지만 한번의 로그인 요청을 통하여 받게되는 데이터를 redux store에 하나의 state로 관리하는 것은 비효율적이라고 생각하였고, 서버에서 유저 정보를 관리하는 데이터 형태와는 다른 형태로 redux state를 normalize하여 관리하게 되었습니다. 추가적인 이점으로 특정 상태의 업데이트가 불필요하게 다른 컴포넌트의 리렌더링을 유발하는 경우를 줄일 수 있었습니다.  
 <br>
 
 **`Custom Hook`**, **`Abstraction`**  
+[코드 링크](https://github.com/sungjinsama/note-in-travel-client/blob/master/src/screens/CourseDetailScreen.jsx)  
 hook도 결국은 함수라는 생각으로 함수 추출의 기준에 따라 작성하려고 하였고, 그 과정에서 하나의 hook이 어느정도의 기능을 포함하는 것이 적절한가에 대한 결정이 쉽지 않다는 것을 느꼈습니다.  
 이번 프로젝트에서 저는 다음과 같은 기준으로 custom hook을 만들고자 하였습니다.
 - 관심사의 분리
@@ -79,6 +81,7 @@ DRY한 코드를 작성하기 위하여 함수의 추출이라는 선택을 할 
 <br>
 
 **`Spatial Hash Grid`**, **`Clustering`**, **`Opimization`**  
+[코드 링크](https://github.com/sungjinsama/note-in-travel-client/blob/master/src/utils/generateSpatialHashGrid.js)  
 핵심적인 기능 중, 현재 나의 위치를 기반으로 주변에 있는 쪽지만을 보여줘야하는 기능이 있습니다.  
 현재 수행 중인 일정내의 모든 쪽지를 매번 검사하여, 보여줄지 숨길지의 여부를 판단할 수도 있었습니다. 하지만 쪽지의 수가 많아질 경우 나의 위치가 조금 변경될때마다 모든 쪽지를 모두 검사하여 거리를 계산하는 것은 매우 비효율적이라고 판단하였고, 효율적인 방법을 고민하였습니다.  
 1차 프로젝트에서 게임관련 로직을 공부할 기회가 있었고, 그때 공부한 spatial hash gird을 참고하여 문제를 해결할 수 있었습니다.  
@@ -87,6 +90,9 @@ React Three Fiber를 공부하면서 알게된 지식이, 전혀 관련이 없�
 <br>
 
 **`Testing`**  
+[코드 링크(utils)](https://github.com/sungjinsama/note-in-travel-client/tree/master/src/utils)  
+[코드 링크(hooks)](https://github.com/sungjinsama/note-in-travel-client/tree/master/src/hooks)  
+[코드 링크(components)](https://github.com/sungjinsama/note-in-travel-client/tree/master/src/components)  
 Test-driven Development(이하 TDD)는 오류를 최소화할 수 있고 이후에 코드를 다시 봤을때 로직의 의도를 파악하는데 도움을 주는 등 많은 이점이 있다고 생각합니다. 하지만 React Native를 처음 사용해본다는 걱정과 짧은 시간에 개발을 해야하기에 시간이 부족하지 않을까하는 걱정에 온전히 적용하지는 못하였으나, 개발을 진행하며 꼭 필요하다고 생각한 부분에 적용하였고 대표적으로 Spatial Hash Grid로직을 작성하며 TDD의 장점을 느낄 수 있었습니다.  
 내부적으로 기능이 복잡하다고 생각하여 test를 먼저 작성한 후 하나씩 해결하는 방식으로 코드를 작성하였습니다. 이후 완성된 로직을 사용하며 여러 오류를 접하였으나, 테스트 코드를 통하여 검증된 부분이 있기에 버그를 찾는데 많은 시간을 절약할 수 있었고 TDD를 기반으로 작성한 코드에서는 거의 오류가 발생하지 않았습니다.  
 React를 사용하였는가, React Native를 사용하였느나, Redux를 사용하였는가, React Navigation을 사용하였는가 등 어떠한 기술 스택을 이용하였는가에 따라 테스트 코드의 작성 방식이 조금씩 다르기때문에 각각의 경우에따라 다른 방식을 적용해야한다는 점을 알게되어 재밌고 좋은 경험이었습니다. TDD에 대해 더 공부하여, 다음에는 더 발전한 방법으로 TDD기반 개발을 진행해보고 싶다는 생각을 하였습니다.  
